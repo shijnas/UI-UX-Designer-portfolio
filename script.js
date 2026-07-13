@@ -841,8 +841,54 @@ document.addEventListener('DOMContentLoaded', () => {
       feedbackRatingValue.value = 5;
       updateStars(5);
 
-      // Re-render
       renderReviews();
     });
+
+    // --- Typewriter Hero Subtitle Rotation ---
+    const typedRole = document.getElementById('typedRole');
+    if (typedRole) {
+      const roles = [
+        'UI/UX Designer',
+        'Web Development',
+        'WebApplication Development',
+        'Game Tester'
+      ];
+      let roleIndex = 0;
+      let charIndex = roles[roleIndex].length;
+      let isDeleting = false;
+      let typingSpeed = 100;
+
+      function typeEffect() {
+        const currentRole = roles[roleIndex];
+        
+        if (isDeleting) {
+          // Remove character
+          typedRole.textContent = currentRole.substring(0, charIndex - 1);
+          charIndex--;
+          typingSpeed = 50; // Deleting is faster
+        } else {
+          // Add character
+          typedRole.textContent = currentRole.substring(0, charIndex + 1);
+          charIndex++;
+          typingSpeed = 100;
+        }
+
+        if (!isDeleting && charIndex === currentRole.length) {
+          // Pause at the end of the word
+          typingSpeed = 2000;
+          isDeleting = true;
+        } else if (isDeleting && charIndex === 0) {
+          isDeleting = false;
+          // Move to the next role
+          roleIndex = (roleIndex + 1) % roles.length;
+          typingSpeed = 500; // Small pause before typing next word
+        }
+
+        setTimeout(typeEffect, typingSpeed);
+      }
+      
+      // Start typing loop
+      setTimeout(typeEffect, 1000);
+    }
   }
 });

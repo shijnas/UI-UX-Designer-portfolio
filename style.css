@@ -581,6 +581,18 @@ body.light-theme .sun-icon {
   letter-spacing: -0.02em;
 }
 
+.typed-cursor {
+  font-weight: 300;
+  color: var(--nav-logo-dot);
+  animation: subtitle-cursor-blink 1s infinite;
+  margin-left: 2px;
+}
+
+@keyframes subtitle-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 .hero-description {
   font-size: 1.1rem;
   color: var(--text-secondary);
