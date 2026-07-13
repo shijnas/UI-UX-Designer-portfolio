@@ -849,8 +849,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typedRole) {
       const roles = [
         'UI/UX Designer',
-        'Web Development',
-        'WebApplication Development',
+        'Web Developer',
+        'WebApplication Developer',
         'Game Tester'
       ];
       let roleIndex = 0;
