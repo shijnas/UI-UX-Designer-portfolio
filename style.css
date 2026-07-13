@@ -2584,6 +2584,13 @@ body.light-theme .sun-icon {
   .tools-grid {
     grid-template-columns: repeat(4, 1fr);
   }
+  
+  .iphone-container {
+    position: relative;
+    right: auto;
+    top: auto;
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 768px) {
@@ -2790,4 +2797,11 @@ body.light-theme .shortcut-btn {
 
 body.light-theme .shortcut-btn:active {
   background: rgba(0, 0, 0, 0.15) !important;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .cursor-glass-arrow,
+  .cursor-glass-trail {
+    display: none !important;
+  }
 }
