@@ -855,7 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ];
       let roleIndex = 0;
       let charIndex = roles[roleIndex].length;
-      let isDeleting = false;
+      let isDeleting = true; // Start with deleting the pre-rendered text
       let typingSpeed = 100;
 
       function typeEffect() {
@@ -887,8 +887,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(typeEffect, typingSpeed);
       }
       
-      // Start typing loop
-      setTimeout(typeEffect, 1000);
+      // Start typing loop after 2 seconds
+      setTimeout(typeEffect, 2000);
     }
   }
 });
