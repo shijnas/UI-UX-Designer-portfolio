@@ -628,6 +628,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let mouseY = 0;
     let trailX = 0;
     let trailY = 0;
+    let isLoopActive = false;
     let isMoving = false;
     
     window.addEventListener('mousemove', (e) => {
@@ -643,19 +644,36 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Position the main glass arrow instantly so clicking feels fast and accurate
       cursorArrow.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+      
+      // Trigger smooth trail LERP loop only if not currently running
+      if (!isLoopActive) {
+        isLoopActive = true;
+        animateCursor();
+      }
     });
     
     // Smooth LERP loop for lagging trail glass arrow
     function animateCursor() {
       const lerpFactor = 0.15; // Smooth trailing lag
-      trailX += (mouseX - trailX) * lerpFactor;
-      trailY += (mouseY - trailY) * lerpFactor;
+      const diffX = mouseX - trailX;
+      const diffY = mouseY - trailY;
+      
+      // Exit loop and save CPU/GPU resources if trail caught up and mouse is idle
+      if (Math.abs(diffX) < 0.08 && Math.abs(diffY) < 0.08) {
+        trailX = mouseX;
+        trailY = mouseY;
+        cursorTrail.style.transform = `translate3d(${trailX}px, ${trailY}px, 0)`;
+        isLoopActive = false;
+        return;
+      }
+      
+      trailX += diffX * lerpFactor;
+      trailY += diffY * lerpFactor;
       
       cursorTrail.style.transform = `translate3d(${trailX}px, ${trailY}px, 0)`;
       
       requestAnimationFrame(animateCursor);
     }
-    animateCursor();
     
     // Hover effects on interactive elements
     function addHoverListeners() {

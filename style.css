@@ -166,6 +166,8 @@ button {
   pointer-events: none;
   z-index: -2;
   transition: opacity 0.5s ease;
+  will-change: transform;
+  transform: translate3d(0,0,0);
 }
 
 body.light-theme .glow-bg {
