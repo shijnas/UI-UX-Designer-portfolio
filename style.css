@@ -2593,6 +2593,19 @@ body.light-theme .sun-icon {
     top: auto;
     margin: 0 auto;
   }
+
+  .hero-right {
+    height: auto;
+    min-height: 520px;
+    margin-top: 2rem;
+  }
+
+  .toolbar-widget,
+  .projects-widget,
+  .dashboard-widget,
+  .clients-widget {
+    display: none !important;
+  }
 }
 
 @media (max-width: 768px) {
@@ -2672,6 +2685,7 @@ body.light-theme .sun-icon {
   
   .hero-right {
     height: 380px;
+    min-height: auto;
     zoom: 0.8; /* Scale down hero mockup for small mobile */
   }
   
