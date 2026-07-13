@@ -2588,6 +2588,7 @@ body.light-theme .sun-icon {
   }
   
   .iphone-container {
+    grid-column: 1 / span 2;
     position: relative;
     right: auto;
     top: auto;
@@ -2596,14 +2597,53 @@ body.light-theme .sun-icon {
 
   .hero-right {
     height: auto;
-    min-height: 520px;
+    min-height: auto;
     margin-top: 2rem;
   }
 
-  .toolbar-widget,
-  .projects-widget,
-  .dashboard-widget,
-  .clients-widget {
+  .hero-visual-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    align-items: center;
+    height: auto;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    gap: 1.5rem 0;
+  }
+
+  /* Display key stat widgets side-by-side below the phone mockup */
+  .hero-widget.projects-widget {
+    grid-column: 1;
+    justify-self: right;
+    margin-right: 0.75rem;
+  }
+
+  .hero-widget.clients-widget {
+    grid-column: 2;
+    justify-self: left;
+    margin-left: 0.75rem;
+  }
+
+  .hero-widget.projects-widget,
+  .hero-widget.clients-widget {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    display: block !important;
+    width: 160px;
+    margin: 0;
+    box-shadow: var(--shadow-sm);
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* Hide the vertical toolbar and large dashboard card on mobile */
+  .hero-widget.toolbar-widget,
+  .hero-widget.dashboard-widget {
     display: none !important;
   }
 }
