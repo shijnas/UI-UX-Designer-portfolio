@@ -118,6 +118,13 @@ body.light-theme {
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari and Opera */
 }
 
 body {
@@ -127,7 +134,26 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   transition: background-color 0.5s ease, color 0.5s ease;
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
+
+body::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+}
+
+#main-wrapper {
+  max-width: 177.78vh;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-primary);
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.6);
+  border-left: 1px solid rgba(255, 255, 255, 0.03);
+  border-right: 1px solid rgba(255, 255, 255, 0.03);
+}
+
 
 a {
   color: inherit;
@@ -327,8 +353,10 @@ body.light-theme .glow-bg {
 .header {
   position: fixed;
   top: 20px;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
+  max-width: 177.78vh;
   height: auto;
   z-index: 100;
   display: flex;
@@ -2483,16 +2511,27 @@ body.light-theme .sun-icon {
 }
 
 .footer-bottom {
+  position: relative;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   border-top: 1px solid var(--border-glass);
-  padding-top: 2.5rem;
+  padding: 2.5rem 0;
+}
+
+.footer-right-container {
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .copyright {
   font-size: 0.85rem;
   color: var(--text-muted);
+  text-align: center;
+  transition: var(--transition);
 }
 
 .social-follow {
@@ -2711,11 +2750,25 @@ body.light-theme .sun-icon {
   }
   
   .footer-bottom {
+    display: flex;
     flex-direction: column;
     gap: 1.5rem;
     text-align: center;
+    align-items: center;
   }
-  
+
+  .footer-right-container {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .footer {
+    padding-bottom: 5.5rem; /* Extra padding to prevent mobile footer elements from colliding with the fixed chatbot trigger */
+  }
+
   .tools-grid {
     grid-template-columns: repeat(3, 1fr);
   }

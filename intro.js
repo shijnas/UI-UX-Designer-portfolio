@@ -51,6 +51,7 @@
   }
 
   function updateScenes(p) {
+    if (introDone) return;
     const bar = $('cin-progress-bar');
     if (bar) bar.style.width = (p * 100).toFixed(1) + '%';
 
@@ -157,6 +158,10 @@
     });
   }
 
+  function onResize() {
+    phoneTarget = null;
+  }
+
   function finishIntro() {
     if (introDone) return;
     lazyLoadProjectIframes(); // Fallback to load if skipped
@@ -190,9 +195,17 @@
     document.body.classList.remove('intro-active');
     document.body.style.overflow = '';
     cancelAnimationFrame(rafId);
+
+    // Clean up event listeners to prevent loop overrun and unnecessary CPU usage
+    window.removeEventListener('wheel',      onWheel);
+    window.removeEventListener('touchstart', onTouchStart);
+    window.removeEventListener('touchmove',  onTouchMove);
+    window.removeEventListener('keydown',    onKeyDown);
+    window.removeEventListener('resize',     onResize);
   }
 
   function loop() {
+    if (introDone) return;
     const delta = Math.abs(targetProg - progress);
     progress += (targetProg - progress) * CFG.lerpSpeed;
 
@@ -262,7 +275,7 @@
     window.addEventListener('touchstart', onTouchStart, { passive: true  });
     window.addEventListener('touchmove',  onTouchMove,  { passive: false });
     window.addEventListener('keydown',    onKeyDown);
-    window.addEventListener('resize',     () => { phoneTarget = null; });
+    window.addEventListener('resize',     onResize);
 
     const sb = $('intro-skip-btn');
     if (sb) {
