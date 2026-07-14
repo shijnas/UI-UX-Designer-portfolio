@@ -2758,13 +2758,13 @@ body.light-theme .sun-icon {
    Custom Liquid Glass Cursor (Arrow Pointer)
    ========================================================================== */
 @media (min-width: 769px) {
-  html, body {
+  *, *::before, *::after {
     cursor: none !important;
   }
-  
-  a, button, .clickable, [role="button"], input, select, textarea, .contact-pill, .nav-link, .btn-contact-me, .social-icon-btn, .toolbar-btn, .scroll-top-btn {
-    cursor: none !important;
-  }
+}
+
+.phone-screen-iframe {
+  pointer-events: none; /* Prevents cursor from resetting inside the cross-origin iframe and stops iframe from hijacking scroll wheel */
 }
 
 .cursor-glass-arrow {
