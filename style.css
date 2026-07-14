@@ -2875,7 +2875,7 @@ body.light-theme .shortcut-btn:active {
 }
 
 /* ==========================================================================
-   3-PHONES LIVE MOCKUP PREVIEW — കയിക്ക്
+   3-PHONES LIVE MOCKUP PREVIEW — iPhone 15 Pro Max
    ========================================================================== */
 .project-phones-wrapper {
   position: relative;
@@ -2883,21 +2883,24 @@ body.light-theme .shortcut-btn:active {
   justify-content: space-around;
   align-items: center;
   padding: 1.8rem 1rem;
-  background: radial-gradient(circle at center, #1b1333 0%, #080612 100%);
+  background: radial-gradient(circle at center, #16112a 0%, #06040d 100%);
   border-bottom: 1px solid var(--border-glass);
   overflow: hidden;
-  height: 380px;
+  height: 400px;
 }
 
 .mock-phone {
   position: relative;
   width: 29%;
-  height: 95%;
+  height: 96%;
   background: #000000;
-  border: 6px solid #1c1829;
-  border-radius: 26px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 
-              0 0 0 1px rgba(255, 255, 255, 0.08);
+  border: 4.5px solid #0f0d13; /* Concentric uniform black bezel */
+  border-radius: 32px;
+  /* Titanium outer casing ring highlight + realistic shadow */
+  box-shadow: 
+    0 0 0 1.2px #2f2d3a, 
+    0 15px 35px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 0.8px rgba(255, 255, 255, 0.05);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -2906,77 +2909,125 @@ body.light-theme .shortcut-btn:active {
 }
 
 .mock-phone:hover {
-  transform: translateY(-6px) scale(1.03);
-  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2), 
-              0 0 0 1.5px rgba(139, 92, 246, 0.3);
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 
+    0 0 0 1.5px #8b5cf6,
+    0 20px 45px rgba(139, 92, 246, 0.25),
+    inset 0 0 0 0.8px rgba(255, 255, 255, 0.1);
 }
 
-/* Phone top notch (Dynamic Island style) */
+/* Speaker slit (iPhone 15 micro-grille) */
+.phone-speaker {
+  position: absolute;
+  top: 1.5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 1.2px;
+  background: #19181f;
+  border-radius: 1px;
+  z-index: 15;
+}
+
+/* Glass reflection glare overlay */
+.phone-glare {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 55%);
+  pointer-events: none;
+  z-index: 12;
+}
+
+/* Dynamic Island (Detached, Pill shape) */
 .mock-phone::before {
   content: '';
   position: absolute;
-  top: 5px;
+  top: 8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 42px;
+  width: 32px;
   height: 10px;
-  background: #1c1829;
-  border-radius: 6px;
-  z-index: 10;
+  background: #000000;
+  border-radius: 8px;
+  z-index: 14;
+  box-shadow: inset 0 0 0.5px rgba(255, 255, 255, 0.18);
 }
 
-/* Phone bottom indicator bar */
+/* Home Indicator Bar (iOS Swipe indicator) */
 .mock-phone::after {
   content: '';
   position: absolute;
   bottom: 4px;
   left: 50%;
   transform: translateX(-50%);
-  width: 38px;
-  height: 3px;
+  width: 34px;
+  height: 2.2px;
   background: rgba(255, 255, 255, 0.35);
   border-radius: 2px;
-  z-index: 10;
+  z-index: 14;
+}
+
+/* Outer screen container to crop scaled content cleanly */
+.phone-screen-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  border-radius: 27px; /* Concentric concentricity matching 32px bezel minus border */
+  background: #06040d;
+  z-index: 1;
 }
 
 .phone-screen-iframe {
-  width: 100%;
-  height: 100%;
   border: none;
-  background: #080612;
-  border-radius: 20px;
-  overflow: hidden;
+  background: #06040d;
 }
 
-/* Mobile Responsiveness for 3 Phones */
+/* Mobile responsive style */
 @media (max-width: 991px) {
   .project-phones-wrapper {
-    height: 320px;
+    height: 330px;
+  }
+  .mock-phone {
+    border-radius: 26px;
+    border-width: 3.5px;
+  }
+  .phone-screen-container {
+    border-radius: 22px;
+  }
+  .mock-phone::before {
+    top: 6px;
+    width: 26px;
+    height: 8px;
+    border-radius: 6px;
   }
 }
 
 @media (max-width: 768px) {
   .project-phones-wrapper {
     height: 240px;
-    padding: 1rem 0.4rem;
+    padding: 1rem 0.3rem;
   }
   .mock-phone {
-    border-width: 4px;
-    border-radius: 16px;
+    border-width: 3px;
+    border-radius: 18px;
+  }
+  .phone-screen-container {
+    border-radius: 15px;
   }
   .mock-phone::before {
-    width: 25px;
+    top: 5px;
+    width: 20px;
     height: 6px;
-    top: 3px;
-    border-radius: 3px;
+    border-radius: 5px;
   }
   .mock-phone::after {
-    width: 20px;
-    height: 2px;
+    width: 18px;
+    height: 1.5px;
     bottom: 3px;
-  }
-  .phone-screen-iframe {
-    border-radius: 12px;
   }
 }
 
