@@ -265,6 +265,12 @@
     const intro = $('cinematic-intro');
     if (!intro) return;
 
+    // Optimize sensitivity for mobile/touch screens to make scrolling much faster and snappier
+    if (window.innerWidth <= 768) {
+      CFG.touchSensitivity = 0.0022; // ~6.5x faster scroll progression on swipes
+      CFG.lerpSpeed = 0.095;        // Snappier, less laggy inertia tracking
+    }
+
     document.body.classList.add('intro-active');
     document.body.style.overflow = 'hidden';
 
