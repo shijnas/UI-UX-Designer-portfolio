@@ -267,8 +267,8 @@
 
     // Optimize sensitivity for mobile/touch screens to make scrolling much faster and snappier
     if (window.innerWidth <= 768) {
-      CFG.touchSensitivity = 0.0022; // ~6.5x faster scroll progression on swipes
-      CFG.lerpSpeed = 0.095;        // Snappier, less laggy inertia tracking
+      CFG.touchSensitivity = 0.0012; // Balanced fast scroll progression on swipes (~3.5x faster)
+      CFG.lerpSpeed = 0.075;        // Silky, responsive inertia tracking
     }
 
     document.body.classList.add('intro-active');
