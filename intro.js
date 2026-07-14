@@ -112,9 +112,9 @@
     // ── SCENE 2 · Scrolling portfolio preview ────────────
     if (scrollScr && lockScreen) {
 
-      // Crossfade lock → scroll → lock
-      const scrollShowP = prog(p, S.scrollIn,  S.scrollFull);  // 0→1 fade in
-      const scrollHideP = prog(p, S.scrollOut, S.lockIn);      // 0→1 fade out
+      // Crossfade lock → resume → lock
+      const scrollShowP = prog(p, S.scrollIn,  S.scrollFull);
+      const scrollHideP = prog(p, S.scrollOut, S.lockIn);
 
       const scrollOpacity = easeO3(scrollShowP) * (1 - easeO3(scrollHideP));
       const lockOpacity   = 1 - easeO3(scrollShowP) + easeO3(scrollHideP) * easeO3(scrollShowP);
@@ -122,7 +122,23 @@
       scrollScr.style.opacity  = Math.min(1, scrollOpacity).toFixed(3);
       lockScreen.style.opacity = Math.max(0, Math.min(1, lockOpacity)).toFixed(3);
 
-      // Start/stop CSS scroll animation
+      // JS-controlled resume scroll — tied directly to user's scroll progress
+      const resumeBody = document.querySelector('.ios-resume-scroll-body');
+      if (resumeBody && scrollOpacity > 0.02) {
+        const container    = scrollScr;
+        const totalH       = resumeBody.scrollHeight;
+        const visibleH     = container.clientHeight;
+        const maxScroll    = Math.max(0, totalH - visibleH);
+        // Map Scene 2 progress (scrollFull → scrollOut) → 0..maxScroll
+        const resumeP      = easeIO(prog(p, S.scrollFull, S.scrollOut));
+        const scrollPx     = resumeP * maxScroll;
+        resumeBody.style.transform = `translateY(-${scrollPx.toFixed(1)}px)`;
+        resumeBody.style.willChange = 'transform';
+      } else if (resumeBody && scrollOpacity <= 0.02) {
+        resumeBody.style.transform = 'translateY(0)';
+      }
+
+      // Show .playing class (kept for any CSS that depends on it)
       if (scrollOpacity > 0.05) {
         scrollScr.classList.add('playing');
       } else {

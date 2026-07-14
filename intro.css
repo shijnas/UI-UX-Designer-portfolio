@@ -194,23 +194,6 @@ body.intro-active {
   pointer-events: none;
 }
 
-.cin-scroll-inner,
-.ios-resume-scroll-body.cin-scroll-inner {
-  padding: 0;
-  will-change: transform;
-  animation: cin-portfolio-scroll 9s linear infinite;
-  animation-play-state: paused;
-}
-
-.cin-phone-scroll-screen.playing .cin-scroll-inner,
-.cin-phone-scroll-screen.playing .ios-resume-scroll-body {
-  animation-play-state: running;
-}
-
-@keyframes cin-portfolio-scroll {
-  0%   { transform: translateY(0); }
-  100% { transform: translateY(-72%); }
-}
 
 /* Nav */
 .cps-nav {
