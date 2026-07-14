@@ -35,133 +35,120 @@
 
         <!-- Scene 2: Portfolio scrolling preview inside phone -->
         <div class="cin-phone-scroll-screen" id="cin-phone-scroll">
-          <div class="cin-scroll-inner">
-
-            <!-- Status Bar -->
-            <div class="crs-status-bar">
-              <span class="crs-time">20:56</span>
-              <div class="crs-status-icons">
-                <svg width="10" height="8" viewBox="0 0 24 18" fill="currentColor"><rect x="0"  y="6"  width="4" height="12" rx="1"/><rect x="6"  y="4"  width="4" height="14" rx="1"/><rect x="12" y="2"  width="4" height="16" rx="1"/><rect x="18" y="0"  width="4" height="18" rx="1"/></svg>
-                <svg width="10" height="8" viewBox="0 0 24 18" fill="currentColor"><path d="M12 4C8.5 4 5.4 5.4 3.1 7.7L1 5.6C3.9 2.6 7.8 1 12 1s8.1 1.6 11 4.6L20.9 7.7C18.6 5.4 15.5 4 12 4z"/><path d="M12 9c-2 0-3.8.8-5.1 2.1L5 9.2C6.9 7.3 9.3 6 12 6s5.1 1.3 7 3.2l-1.9 1.9C15.8 9.8 14 9 12 9z"/><circle cx="12" cy="15" r="2.5"/></svg>
-                <svg width="14" height="8" viewBox="0 0 28 14" fill="none"><rect x="0.5" y="0.5" width="24" height="13" rx="3.5" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="18" height="10" rx="2" fill="currentColor"/><path d="M26 5v4a2 2 0 000-4z" fill="currentColor" fill-opacity="0.4"/></svg>
-              </div>
+          <!-- Exact iOS Resume App — cloned from homepage iPhone -->
+          <div class="unlocked-header-bar">
+            <span class="unlocked-time">19:20</span>
+            <div class="status-icons">
+              <svg class="icon-cellular" width="12" height="8" viewBox="0 0 24 24" fill="currentColor"><path d="M2 22h3v-3H2v3zm5 0h3v-6H7v6zm5 0h3v-10h-3v10zm5 0h3V7h-3v15zm5 0h3V2h-3v20z"/></svg>
+              <svg class="icon-wifi" width="12" height="8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21l-12-12c5.52-5.52 14.48-5.52 20 0z"/></svg>
+              <div class="icon-battery mini"><div class="battery-level" style="width:88%"></div></div>
             </div>
+          </div>
 
-            <!-- Nav Bar -->
-            <div class="crs-nav">
-              <div class="crs-back">
-                <svg width="7" height="11" viewBox="0 0 7 12" fill="none"><path d="M6 1L1 6l5 5" stroke="#a855f7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="ios-resume-app">
+            <div class="ios-nav-header">
+              <span class="ios-back-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                 <span>Back</span>
-              </div>
-              <span class="crs-nav-title">Resume</span>
-              <div class="crs-menu-dots">
-                <span></span><span></span><span></span>
+              </span>
+              <span class="ios-nav-title">Resume</span>
+              <span class="ios-nav-action-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </span>
+            </div>
+
+            <div class="ios-search-container">
+              <div class="ios-search-bar">
+                <svg class="search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <span class="search-text">Search resume</span>
               </div>
             </div>
 
-            <!-- Search Bar -->
-            <div class="crs-search">
-              <svg width="9" height="9" viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="6" stroke="rgba(255,255,255,0.3)" stroke-width="1.8"/><path d="M13 13l3.5 3.5" stroke="rgba(255,255,255,0.3)" stroke-width="1.8" stroke-linecap="round"/></svg>
-              <span>Search resume</span>
-            </div>
-
-            <!-- Profile Card -->
-            <div class="crs-profile-card">
-              <div class="crs-avatar">SY</div>
-              <div class="crs-name">Shijnas Yunus</div>
-              <div class="crs-title">Aspiring UI/UX Designer</div>
-              <div class="crs-location">
-                <svg width="7" height="8" viewBox="0 0 14 18" fill="none"><path d="M7 1C4.2 1 2 3.2 2 6c0 4 5 11 5 11s5-7 5-11c0-2.8-2.2-5-5-5z" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><circle cx="7" cy="6" r="2" fill="rgba(255,255,255,0.4)"/></svg>
-                Kannur, Kerala, India
-              </div>
-              <div class="crs-contact-icons">
-                <div class="crs-icon-btn">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z" stroke="currentColor" stroke-width="1.5"/></svg>
-                </div>
-                <div class="crs-icon-btn">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="1.5"/><polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="1.5"/></svg>
-                </div>
-                <div class="crs-icon-btn">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
-                </div>
-              </div>
-            </div>
-
-            <!-- Professional Summary -->
-            <div class="crs-section">
-              <div class="crs-section-title">PROFESSIONAL SUMMARY</div>
-              <div class="crs-body-text">
-                Creative and detail-oriented aspiring UI/UX Designer with experience designing user-friendly, visually appealing interfaces. Skilled in Figma, wireframing, and responsive design principles. Passionate about building digital products that people love.
-              </div>
-            </div>
-
-            <!-- Education -->
-            <div class="crs-section">
-              <div class="crs-section-title">EDUCATION</div>
-              <div class="crs-timeline-item">
-                <div class="crs-timeline-dot"></div>
-                <div class="crs-timeline-content">
-                  <div class="crs-item-title">Bachelor of Computer Applications</div>
-                  <div class="crs-item-sub">De Paul Arts &amp; Science College</div>
-                  <div class="crs-item-meta">2021 – 2024 · Kannur, Kerala</div>
+            <div class="ios-resume-scroll-body cin-scroll-inner">
+              <div class="ios-card ios-profile-header-card">
+                <div class="profile-avatar">SY</div>
+                <h2 class="profile-name">Shijnas Yunus</h2>
+                <p class="profile-title">Aspiring UI/UX Designer</p>
+                <p class="profile-loc">Kannur, Kerala, India</p>
+                <div class="ios-contact-pills">
+                  <a href="tel:+918281717536" class="contact-pill" title="Call">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  </a>
+                  <a href="mailto:yshijnas@gmail.com" class="contact-pill" title="Email">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  </a>
+                  <a href="https://www.linkedin.com/in/shijnas-yunus-911192332/" target="_blank" rel="noopener noreferrer" class="contact-pill" title="LinkedIn">
+                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                  </a>
                 </div>
               </div>
-            </div>
 
-            <!-- Experience -->
-            <div class="crs-section">
-              <div class="crs-section-title">EXPERIENCE</div>
-              <div class="crs-timeline-item">
-                <div class="crs-timeline-dot"></div>
-                <div class="crs-timeline-content">
-                  <div class="crs-item-title">UI/UX Designer — Freelance</div>
-                  <div class="crs-item-meta">2023 – Present · Remote</div>
-                  <div class="crs-item-desc">Designed mobile &amp; web interfaces for 20+ clients across food, fintech, and travel domains.</div>
+              <div class="ios-card">
+                <h3 class="ios-card-title">Professional Summary</h3>
+                <p class="ios-card-text">Creative and detail-oriented aspiring UI/UX Designer with experience designing user-friendly interfaces using Figma. Skilled in wireframing, prototyping, responsive design, design systems, HTML5, CSS3, and AI-powered productivity tools. Passionate about creating intuitive digital experiences.</p>
+              </div>
+
+              <div class="ios-card">
+                <h3 class="ios-card-title">Technical Skills</h3>
+                <div class="ios-skill-group">
+                  <span class="skill-tag-header">UI/UX:</span>
+                  <div class="ios-skill-pills"><span>Figma</span><span>Wireframing</span><span>Prototyping</span><span>Auto Layout</span><span>Components</span><span>Responsive Design</span><span>Design Systems</span><span>User Flows</span></div>
+                </div>
+                <div class="ios-skill-group">
+                  <span class="skill-tag-header">Front-End:</span>
+                  <div class="ios-skill-pills"><span>HTML5</span><span>CSS3</span><span>Basic JavaScript</span></div>
+                </div>
+                <div class="ios-skill-group">
+                  <span class="skill-tag-header">AI Tools:</span>
+                  <div class="ios-skill-pills accent"><span>Cursor AI</span><span>ChatGPT</span><span>Gemini</span><span>Claude</span><span>GitHub Copilot</span><span>Midjourney</span><span>Adobe Firefly</span><span>Canva AI</span><span>Notion AI</span></div>
                 </div>
               </div>
-              <div class="crs-timeline-item">
-                <div class="crs-timeline-dot"></div>
-                <div class="crs-timeline-content">
-                  <div class="crs-item-title">Game Tester</div>
-                  <div class="crs-item-meta">2022 – 2023</div>
-                  <div class="crs-item-desc">Performed QA testing, identified bugs, and documented UX issues for game releases.</div>
+
+              <div class="ios-card">
+                <h3 class="ios-card-title">Projects</h3>
+                <ul class="ios-list-view">
+                  <li class="ios-list-item"><div class="item-title">Personal UI/UX Portfolio Website</div><div class="item-desc">Designed &amp; developed a responsive portfolio showcasing UI/UX work.</div></li>
+                  <li class="ios-list-item"><div class="item-title">Game Tester Portfolio</div><div class="item-desc">Created a premium dark-themed portfolio with strong visual hierarchy.</div></li>
+                  <li class="ios-list-item"><div class="item-title">Mobile App UI Concept</div><div class="item-desc">Designed wireframes, prototypes, and high-fidelity screens in Figma.</div></li>
+                </ul>
+              </div>
+
+              <div class="ios-card">
+                <h3 class="ios-card-title">Education</h3>
+                <div class="education-block">
+                  <div class="degree">Bachelor of Computer Applications (BCA)</div>
+                  <div class="college">De Paul Arts and Science College</div>
+                  <div class="duration">2021 – 2024</div>
                 </div>
               </div>
-            </div>
 
-            <!-- Skills -->
-            <div class="crs-section">
-              <div class="crs-section-title">SKILLS</div>
-              <div class="crs-skill-row"><span>Figma</span><div class="crs-bar"><div class="crs-fill" style="width:95%"></div></div></div>
-              <div class="crs-skill-row"><span>UI Design</span><div class="crs-bar"><div class="crs-fill" style="width:90%"></div></div></div>
-              <div class="crs-skill-row"><span>UX Research</span><div class="crs-bar"><div class="crs-fill" style="width:85%"></div></div></div>
-              <div class="crs-skill-row"><span>Prototyping</span><div class="crs-bar"><div class="crs-fill" style="width:88%"></div></div></div>
-              <div class="crs-skill-row"><span>Game Testing</span><div class="crs-bar"><div class="crs-fill" style="width:80%"></div></div></div>
-            </div>
-
-            <!-- Projects -->
-            <div class="crs-section">
-              <div class="crs-section-title">PROJECTS</div>
-              <div class="crs-project-card crs-project-purple">
-                <div class="crs-project-title">Food Delivery App</div>
-                <div class="crs-project-desc">End-to-end UI/UX design for a mobile food delivery platform with modern glassmorphism aesthetics.</div>
+              <div class="ios-card">
+                <h3 class="ios-card-title">Core Competencies</h3>
+                <div class="ios-skill-pills"><span>User Interface Design</span><span>User Experience Design</span><span>Design Thinking</span><span>Typography</span><span>Color Theory</span><span>Responsive Design</span><span>Problem Solving</span><span>Communication</span><span>Collaboration</span><span>Attention to Detail</span></div>
               </div>
-              <div class="crs-project-card crs-project-blue">
-                <div class="crs-project-title">Banking Dashboard</div>
-                <div class="crs-project-desc">SaaS financial analytics dashboard with dark-mode UI and real-time data visualisation.</div>
-              </div>
-            </div>
 
-            <!-- Download CTA -->
-            <div class="crs-download-row">
-              <a href="assets/resume.pdf" download class="crs-download-btn">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M12 16l-4-4h3V4h2v8h3l-4 4z" fill="currentColor"/><path d="M4 18h16v2H4z" fill="currentColor"/></svg>
-                Download Resume
+              <div class="ios-card">
+                <h3 class="ios-card-title">Languages</h3>
+                <div class="ios-skill-pills info"><span>English</span><span>Malayalam</span><span>Hindi</span></div>
+              </div>
+            </div><!-- /.ios-resume-scroll-body -->
+
+            <div class="resume-toolbar">
+              <a href="assets/resume.pdf" download="Shijnas_Yunus_Resume.pdf" class="toolbar-btn" title="Download CV">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </a>
+              <a href="mailto:yshijnas@gmail.com" class="toolbar-btn" title="Contact Me">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </a>
+              <a href="https://www.linkedin.com/in/shijnas-yunus-911192332/" target="_blank" rel="noopener noreferrer" class="toolbar-btn" title="LinkedIn">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              </a>
+              <a href="https://github.com/shijnas" target="_blank" rel="noopener noreferrer" class="toolbar-btn" title="GitHub">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
               </a>
             </div>
-
-          </div><!-- /.cin-scroll-inner -->
-        </div><!-- /#cin-phone-scroll -->
+          </div><!-- /.ios-resume-app -->
+          </div><!-- /#cin-phone-scroll -->
 
       </div>
     </div>
