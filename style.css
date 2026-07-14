@@ -2873,3 +2873,110 @@ body.light-theme .shortcut-btn:active {
     display: none !important;
   }
 }
+
+/* ==========================================================================
+   3-PHONES LIVE MOCKUP PREVIEW — കയിക്ക്
+   ========================================================================== */
+.project-phones-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 1.8rem 1rem;
+  background: radial-gradient(circle at center, #1b1333 0%, #080612 100%);
+  border-bottom: 1px solid var(--border-glass);
+  overflow: hidden;
+  height: 380px;
+}
+
+.mock-phone {
+  position: relative;
+  width: 29%;
+  height: 95%;
+  background: #000000;
+  border: 6px solid #1c1829;
+  border-radius: 26px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 
+              0 0 0 1px rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: transform;
+}
+
+.mock-phone:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2), 
+              0 0 0 1.5px rgba(139, 92, 246, 0.3);
+}
+
+/* Phone top notch (Dynamic Island style) */
+.mock-phone::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 42px;
+  height: 10px;
+  background: #1c1829;
+  border-radius: 6px;
+  z-index: 10;
+}
+
+/* Phone bottom indicator bar */
+.mock-phone::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 38px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 2px;
+  z-index: 10;
+}
+
+.phone-screen-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #080612;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* Mobile Responsiveness for 3 Phones */
+@media (max-width: 991px) {
+  .project-phones-wrapper {
+    height: 320px;
+  }
+}
+
+@media (max-width: 768px) {
+  .project-phones-wrapper {
+    height: 240px;
+    padding: 1rem 0.4rem;
+  }
+  .mock-phone {
+    border-width: 4px;
+    border-radius: 16px;
+  }
+  .mock-phone::before {
+    width: 25px;
+    height: 6px;
+    top: 3px;
+    border-radius: 3px;
+  }
+  .mock-phone::after {
+    width: 20px;
+    height: 2px;
+    bottom: 3px;
+  }
+  .phone-screen-iframe {
+    border-radius: 12px;
+  }
+}
+

@@ -76,10 +76,10 @@
     },
     projects: [
       {
-        name: 'GourmetGo Food Delivery App',
+        name: 'കയിക്ക് Food Delivery App',
         category: 'Mobile App',
         tags: ['UI/UX', 'Mobile', 'Figma'],
-        description: 'Complete end-to-end UI/UX design for GourmetGo, a modern food delivery app with intuitive ordering flow, real-time tracking screen, restaurant listing, and checkout experience.',
+        description: 'Complete end-to-end interactive UI/UX design for കയിക്ക്, a Malayalam food delivery app featuring custom mobile animations, a live restaurant dashboard, and an integrated driver dispatch layout.',
         image: 'assets/project-food.png',
         link: 'https://food-delivery-opal-two.vercel.app/',
       },
