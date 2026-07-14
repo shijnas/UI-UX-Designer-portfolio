@@ -2764,7 +2764,7 @@ body.light-theme .sun-icon {
 }
 
 .phone-screen-iframe {
-  pointer-events: none; /* Prevents cursor from resetting inside the cross-origin iframe and stops iframe from hijacking scroll wheel */
+  pointer-events: auto; /* Restores interactive behavior so users can explore and click items inside the apps directly */
 }
 
 .cursor-glass-arrow {
