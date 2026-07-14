@@ -1,40 +1,27 @@
 /**
  * ============================================================
- * CINEMATIC INTRO — 3-Scene Storyboard
- *
- * Scene 1 (0–35%):  Phone rotates in, materialises centred
- * Scene 2 (35–65%): Phone screen shows portfolio scrolling
- * Scene 3 (65–100%): Phone slides into homepage position,
- *                    portfolio fades in around it
+ * CINEMATIC INTRO — 2-Scene
+ * Scene 1 (0–50%):  Phone rotates in, materialises centred
+ * Scene 2 (50–100%): Phone slides into homepage position,
+ *                    portfolio fades in
  * ============================================================
  */
 (function () {
   'use strict';
 
-  // ──────────────────────────────────────────────────────────
-  // CONFIG
-  // ──────────────────────────────────────────────────────────
   const CFG = {
     lerpSpeed:         0.07,
     scrollSensitivity: 0.00028,
     touchSensitivity:  0.00034,
   };
 
-  // Scene breakpoints (scroll progress 0.0 → 1.0)
   const S = {
-    phoneIn:     0.00,  // Phone starts fading in
-    phoneFull:   0.30,  // Phone fully upright, centred
-    scrollIn:    0.30,  // Scroll screen crossfades in
-    scrollFull:  0.38,  // Scroll screen fully visible + playing
-    scrollOut:   0.72,  // Scroll screen fades back out
-    lockIn:      0.78,  // Lock screen wallpaper comes back
-    slideStart:  0.80,  // Phone begins moving to homepage
-    slideEnd:    1.00,  // Portfolio fully visible
+    phoneIn:    0.00,
+    phoneFull:  0.50,
+    slideStart: 0.50,
+    slideEnd:   1.00,
   };
 
-  // ──────────────────────────────────────────────────────────
-  // STATE
-  // ──────────────────────────────────────────────────────────
   let progress    = 0;
   let targetProg  = 0;
   let rafId       = null;
@@ -42,24 +29,14 @@
   let phoneTarget = null;
   let touchY      = 0;
 
-  // ──────────────────────────────────────────────────────────
-  // DOM
-  // ──────────────────────────────────────────────────────────
   const $ = id => document.getElementById(id);
 
-  // ──────────────────────────────────────────────────────────
-  // MATH
-  // ──────────────────────────────────────────────────────────
   const lerp   = (a, b, t) => a + (b - a) * t;
   const clamp  = (v, mn, mx) => Math.max(mn, Math.min(mx, v));
   const prog   = (t, s, e)  => clamp((t - s) / (e - s), 0, 1);
-  const easeO3 = t => 1 - Math.pow(1 - t, 3);
   const easeO4 = t => 1 - Math.pow(1 - t, 4);
   const easeIO = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
-  // ──────────────────────────────────────────────────────────
-  // MEASURE portfolio phone
-  // ──────────────────────────────────────────────────────────
   function measurePhoneTarget() {
     const mw = $('main-wrapper');
     const pp = $('iphoneContainer');
@@ -72,20 +49,11 @@
     return rect;
   }
 
-  // ──────────────────────────────────────────────────────────
-  // SCENE UPDATE — called every frame
-  // ──────────────────────────────────────────────────────────
   function updateScenes(p) {
-    const intro = $('cinematic-intro');
-    if (!intro) return;
-
-    // Progress bar
     const bar = $('cin-progress-bar');
     if (bar) bar.style.width = (p * 100).toFixed(1) + '%';
 
-    const phone      = $('cin-phone');
-    const lockScreen = $('cin-phone-lock');
-    const scrollScr  = $('cin-phone-scroll');
+    const phone = $('cin-phone');
     if (!phone) return;
 
     // ── SCENE 1 · Phone materialises ─────────────────────
@@ -102,65 +70,13 @@
         `translate(-50%,-50%) perspective(1200px) rotateY(${rotY.toFixed(2)}deg) rotateX(${rotX.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
     }
 
-    // Scroll hint — visible immediately, hides when phone slides away
+    // Scroll hint
     const sh = $('cin-scroll-hint');
-    if (sh) {
-      const hideHint = p >= S.slideStart;
-      sh.style.opacity = hideHint ? '0' : '1';
-    }
+    if (sh) sh.style.opacity = p >= S.slideStart ? '0' : '1';
 
-    // ── SCENE 2 · Scrolling portfolio preview ────────────
-    if (scrollScr && lockScreen) {
-
-      // Crossfade lock → resume → lock
-      const scrollShowP = prog(p, S.scrollIn,  S.scrollFull);
-      const scrollHideP = prog(p, S.scrollOut, S.lockIn);
-
-      const scrollOpacity = easeO3(scrollShowP) * (1 - easeO3(scrollHideP));
-      const lockOpacity   = 1 - easeO3(scrollShowP) + easeO3(scrollHideP) * easeO3(scrollShowP);
-
-      scrollScr.style.opacity  = Math.min(1, scrollOpacity).toFixed(3);
-      lockScreen.style.opacity = Math.max(0, Math.min(1, lockOpacity)).toFixed(3);
-
-      // JS-controlled resume scroll — tied directly to user's scroll progress
-      const resumeBody = document.querySelector('.ios-resume-scroll-body');
-      if (resumeBody && scrollOpacity > 0.02) {
-        const container    = scrollScr;
-        const totalH       = resumeBody.scrollHeight;
-        const visibleH     = container.clientHeight;
-        const maxScroll    = Math.max(0, totalH - visibleH);
-        // Map Scene 2 progress (scrollFull → scrollOut) → 0..maxScroll
-        const resumeP      = easeIO(prog(p, S.scrollFull, S.scrollOut));
-        const scrollPx     = resumeP * maxScroll;
-        resumeBody.style.transform = `translateY(-${scrollPx.toFixed(1)}px)`;
-        resumeBody.style.willChange = 'transform';
-      } else if (resumeBody && scrollOpacity <= 0.02) {
-        resumeBody.style.transform = 'translateY(0)';
-      }
-
-      // Show .playing class (kept for any CSS that depends on it)
-      if (scrollOpacity > 0.05) {
-        scrollScr.classList.add('playing');
-      } else {
-        scrollScr.classList.remove('playing');
-      }
-
-      // Keep phone stationary and straight during scene 2
-      if (p > S.phoneFull && p < S.slideStart) {
-        phone.style.opacity   = '1';
-        phone.style.left      = '50%';
-        phone.style.top       = '50%';
-        phone.style.transform = 'translate(-50%,-50%) perspective(1200px) scale(1)';
-      }
-    }
-
-    // ── SCENE 3 · Phone slides to homepage ───────────────
+    // ── SCENE 2 · Phone slides to homepage ───────────────
     if (p >= S.slideStart) {
-      // Reset scroll screen
-      if (scrollScr) scrollScr.style.opacity = '0';
-      if (lockScreen) lockScreen.style.opacity = '1';
-
-      const s3p = easeIO(prog(p, S.slideStart, S.slideEnd));
+      const s2p = easeIO(prog(p, S.slideStart, S.slideEnd));
 
       if (!phoneTarget) phoneTarget = measurePhoneTarget();
 
@@ -173,13 +89,11 @@
 
         const targetCX = phoneTarget.left + phoneTarget.width  / 2;
         const targetCY = phoneTarget.top  + phoneTarget.height / 2;
-        const scaleX   = phoneTarget.width  / startW;
-        const scaleY   = phoneTarget.height / startH;
-        const avgScale = (scaleX + scaleY) / 2;
+        const avgScale = ((phoneTarget.width / startW) + (phoneTarget.height / startH)) / 2;
 
-        const curL = lerp(startCX, targetCX, s3p);
-        const curT = lerp(startCY, targetCY, s3p);
-        const curS = lerp(1.0, avgScale, s3p);
+        const curL = lerp(startCX, targetCX, s2p);
+        const curT = lerp(startCY, targetCY, s2p);
+        const curS = lerp(1.0, avgScale, s2p);
 
         phone.style.opacity   = '1';
         phone.style.left      = curL + 'px';
@@ -187,23 +101,19 @@
         phone.style.transform =
           `translate(-50%,-50%) perspective(1200px) scale(${curS.toFixed(4)})`;
       } else {
-        phone.style.opacity = (1 - s3p).toFixed(3);
+        phone.style.opacity = (1 - s2p).toFixed(3);
       }
 
-      // Portfolio fades in
       const mw = $('main-wrapper');
       if (mw) {
         mw.style.visibility = 'visible';
-        mw.style.opacity    = s3p.toFixed(3);
+        mw.style.opacity    = s2p.toFixed(3);
       }
 
       if (p >= 0.992 && !introDone) finishIntro();
     }
   }
 
-  // ──────────────────────────────────────────────────────────
-  // FINISH
-  // ──────────────────────────────────────────────────────────
   function finishIntro() {
     if (introDone) return;
     introDone = true;
@@ -231,33 +141,22 @@
 
     document.body.classList.remove('intro-active');
     document.body.style.overflow = '';
-    document.body.style.height   = '';
-
     cancelAnimationFrame(rafId);
   }
 
-  // ──────────────────────────────────────────────────────────
-  // MAIN LOOP
-  // ──────────────────────────────────────────────────────────
   function loop() {
     progress  += (targetProg - progress) * CFG.lerpSpeed;
     updateScenes(progress);
     rafId = requestAnimationFrame(loop);
   }
 
-  // ──────────────────────────────────────────────────────────
-  // INPUT
-  // ──────────────────────────────────────────────────────────
   function onWheel(e) {
     if (introDone) return;
     e.preventDefault();
     targetProg = clamp(targetProg + e.deltaY * CFG.scrollSensitivity, 0, 1);
   }
 
-  function onTouchStart(e) {
-    if (introDone) return;
-    touchY = e.touches[0].clientY;
-  }
+  function onTouchStart(e) { if (!introDone) touchY = e.touches[0].clientY; }
 
   function onTouchMove(e) {
     if (introDone) return;
@@ -270,24 +169,18 @@
   function onKeyDown(e) {
     if (introDone) return;
     if (['ArrowDown', 'PageDown', ' '].includes(e.key)) {
-      e.preventDefault();
-      targetProg = clamp(targetProg + 0.07, 0, 1);
+      e.preventDefault(); targetProg = clamp(targetProg + 0.07, 0, 1);
     }
     if (['ArrowUp', 'PageUp'].includes(e.key)) {
-      e.preventDefault();
-      targetProg = clamp(targetProg - 0.07, 0, 1);
+      e.preventDefault(); targetProg = clamp(targetProg - 0.07, 0, 1);
     }
   }
 
   function skipIntro() {
-    progress   = 0.96;
-    targetProg = 1.0;
+    progress = 0.96; targetProg = 1.0;
     setTimeout(finishIntro, 500);
   }
 
-  // ──────────────────────────────────────────────────────────
-  // INIT
-  // ──────────────────────────────────────────────────────────
   function init() {
     const intro = $('cinematic-intro');
     if (!intro) return;
@@ -296,10 +189,7 @@
     document.body.style.overflow = 'hidden';
 
     const mw = $('main-wrapper');
-    if (mw) {
-      mw.style.opacity    = '0';
-      mw.style.visibility = 'hidden';
-    }
+    if (mw) { mw.style.opacity = '0'; mw.style.visibility = 'hidden'; }
 
     window.addEventListener('wheel',      onWheel,      { passive: false });
     window.addEventListener('touchstart', onTouchStart, { passive: true  });
@@ -314,7 +204,7 @@
     }
 
     const sh = $('cin-scroll-hint');
-    if (sh) sh.classList.add('visible'); // Show immediately on black screen
+    if (sh) sh.classList.add('visible');
 
     loop();
   }
