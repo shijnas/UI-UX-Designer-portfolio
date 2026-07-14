@@ -659,3 +659,35 @@ body.intro-active .header {
     font-size: 2.8rem;
   }
 }
+
+/* ── Light Mode Override for Cinematic Intro ──────────────── */
+body.light-theme #cinematic-intro {
+  background-color: #f6f5f8;
+}
+
+body.light-theme #cin-scroll-hint span {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+body.light-theme .cin-scroll-mouse {
+  border-color: rgba(138, 58, 255, 0.35);
+}
+
+body.light-theme #intro-skip-btn {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(138, 58, 255, 0.35);
+  color: rgba(0, 0, 0, 0.6);
+}
+
+body.light-theme #intro-skip-btn:hover {
+  background: rgba(138, 58, 255, 0.12);
+  border-color: rgba(138, 58, 255, 0.75);
+  color: #111;
+  box-shadow: 0 0 20px rgba(138, 58, 255, 0.15);
+}
+
+body.light-theme .text-liquid-glass {
+  -webkit-text-stroke: 1.5px rgba(138, 58, 255, 0.35);
+  filter: url(#liquid-glass-filter) drop-shadow(0 8px 18px rgba(139, 92, 246, 0.25));
+}
+
