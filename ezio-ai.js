@@ -76,12 +76,12 @@
     },
     projects: [
       {
-        name: 'Food Delivery App',
+        name: 'GourmetGo Food Delivery App',
         category: 'Mobile App',
         tags: ['UI/UX', 'Mobile', 'Figma'],
-        description: 'Complete end-to-end UI/UX design for a modern food delivery app with intuitive ordering flow, real-time tracking screen, restaurant listing, and checkout experience.',
-        image: 'assets/project-food.jpg',
-        link: '#projects',
+        description: 'Complete end-to-end UI/UX design for GourmetGo, a modern food delivery app with intuitive ordering flow, real-time tracking screen, restaurant listing, and checkout experience.',
+        image: 'assets/project-food.png',
+        link: 'https://food-delivery-opal-two.vercel.app/',
       },
       {
         name: 'Banking Dashboard',
