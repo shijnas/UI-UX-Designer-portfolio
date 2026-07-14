@@ -2946,20 +2946,23 @@ body.light-theme .shortcut-btn:active {
    ========================================================================== */
 .project-phones-wrapper {
   position: relative;
-  display: flex;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  justify-items: center;
   align-items: center;
-  padding: 1.8rem 1rem;
+  padding: 3rem 2rem;
   background: radial-gradient(circle at center, #16112a 0%, #06040d 100%);
   border-bottom: 1px solid var(--border-glass);
   overflow: hidden;
-  height: 400px;
+  width: 100%;
 }
 
 .mock-phone {
   position: relative;
-  width: 29%;
-  height: 96%;
+  width: 100%;
+  max-width: 290px;
+  aspect-ratio: 9 / 19.5;
   background: #000000;
   border: 4.5px solid #0f0d13; /* Concentric uniform black bezel */
   border-radius: 32px;
@@ -3066,8 +3069,17 @@ body.light-theme .phone-screen-iframe {
 /* Mobile responsive style */
 @media (max-width: 991px) {
   .project-phones-wrapper {
-    height: 330px;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    padding: 2.5rem 1.5rem;
   }
+  
+  /* Make the third phone center-aligned in the second row */
+  .mock-phone:last-child {
+    grid-column: 1 / span 2;
+    max-width: 260px;
+  }
+
   .mock-phone {
     border-radius: 26px;
     border-width: 3.5px;
@@ -3085,10 +3097,19 @@ body.light-theme .phone-screen-iframe {
 
 @media (max-width: 768px) {
   .project-phones-wrapper {
-    height: 240px;
-    padding: 1rem 0.3rem;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2rem 1rem;
   }
+  
+  .mock-phone:last-child {
+    grid-column: auto;
+    max-width: 250px;
+  }
+
   .mock-phone {
+    width: 85%;
+    max-width: 250px;
     border-width: 3px;
     border-radius: 18px;
   }
