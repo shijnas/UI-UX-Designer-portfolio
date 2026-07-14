@@ -1,9 +1,11 @@
 /**
  * ============================================================
- * CINEMATIC INTRO — Phone-first storyboard
- * Scene 1: Phone materialises on black background
- * Scene 2: Phone slides & scales into exact homepage position
- * Scene 3: Portfolio fades in around it
+ * CINEMATIC INTRO — 3-Scene Storyboard
+ *
+ * Scene 1 (0–35%):  Phone rotates in, materialises centred
+ * Scene 2 (35–65%): Phone screen shows portfolio scrolling
+ * Scene 3 (65–100%): Phone slides into homepage position,
+ *                    portfolio fades in around it
  * ============================================================
  */
 (function () {
@@ -13,26 +15,30 @@
   // CONFIG
   // ──────────────────────────────────────────────────────────
   const CFG = {
-    lerpSpeed:          0.07,
-    scrollSensitivity:  0.00030,
-    touchSensitivity:   0.00038,
+    lerpSpeed:         0.07,
+    scrollSensitivity: 0.00028,
+    touchSensitivity:  0.00034,
   };
 
   // Scene breakpoints (scroll progress 0.0 → 1.0)
   const S = {
-    phoneIn:   0.00,   // Phone starts fading in
-    phoneFull: 0.40,   // Phone fully upright, no rotation
-    slideStart:0.55,   // Phone begins moving to homepage
-    slideEnd:  1.00,   // Phone locked in, portfolio fully visible
+    phoneIn:     0.00,  // Phone starts fading in
+    phoneFull:   0.35,  // Phone fully upright, centred
+    scrollIn:    0.35,  // Scroll screen crossfades in
+    scrollFull:  0.45,  // Scroll screen fully visible + playing
+    scrollOut:   0.60,  // Scroll screen fades back out
+    lockIn:      0.60,  // Lock screen wallpaper comes back
+    slideStart:  0.65,  // Phone begins moving to homepage
+    slideEnd:    1.00,  // Portfolio fully visible
   };
 
   // ──────────────────────────────────────────────────────────
   // STATE
   // ──────────────────────────────────────────────────────────
-  let progress   = 0;
-  let targetProg = 0;
-  let rafId      = null;
-  let introDone  = false;
+  let progress    = 0;
+  let targetProg  = 0;
+  let rafId       = null;
+  let introDone   = false;
   let phoneTarget = null;
   let touchY      = 0;
 
@@ -52,7 +58,7 @@
   const easeIO = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
   // ──────────────────────────────────────────────────────────
-  // MEASURE portfolio phone position
+  // MEASURE portfolio phone
   // ──────────────────────────────────────────────────────────
   function measurePhoneTarget() {
     const mw = $('main-wrapper');
@@ -67,7 +73,7 @@
   }
 
   // ──────────────────────────────────────────────────────────
-  // SCENE UPDATE
+  // SCENE UPDATE — called every frame
   // ──────────────────────────────────────────────────────────
   function updateScenes(p) {
     const intro = $('cinematic-intro');
@@ -77,14 +83,16 @@
     const bar = $('cin-progress-bar');
     if (bar) bar.style.width = (p * 100).toFixed(1) + '%';
 
-    const phone = $('cin-phone');
+    const phone      = $('cin-phone');
+    const lockScreen = $('cin-phone-lock');
+    const scrollScr  = $('cin-phone-scroll');
     if (!phone) return;
 
-    // ── SCENE 1 & 2 · Phone materialises ─────────────────
-    if (p < S.slideStart) {
+    // ── SCENE 1 · Phone materialises ─────────────────────
+    if (p <= S.phoneFull) {
       const s1p  = easeO4(prog(p, S.phoneIn, S.phoneFull));
       const rotY = lerp(38, 0, s1p);
-      const rotX = lerp(5, 0, s1p);
+      const rotX = lerp(5,  0, s1p);
       const sc   = lerp(0.55, 1.0, s1p);
 
       phone.style.opacity   = s1p.toFixed(3);
@@ -97,13 +105,46 @@
     // Scroll hint
     const sh = $('cin-scroll-hint');
     if (sh) {
-      const show = p > 0.15 && p < 0.50;
+      const show = p > 0.12 && p < S.slideStart;
       sh.style.opacity = show ? '1' : '0';
+    }
+
+    // ── SCENE 2 · Scrolling portfolio preview ────────────
+    if (scrollScr && lockScreen) {
+
+      // Crossfade lock → scroll → lock
+      const scrollShowP = prog(p, S.scrollIn,  S.scrollFull);  // 0→1 fade in
+      const scrollHideP = prog(p, S.scrollOut, S.lockIn);      // 0→1 fade out
+
+      const scrollOpacity = easeO3(scrollShowP) * (1 - easeO3(scrollHideP));
+      const lockOpacity   = 1 - easeO3(scrollShowP) + easeO3(scrollHideP) * easeO3(scrollShowP);
+
+      scrollScr.style.opacity  = Math.min(1, scrollOpacity).toFixed(3);
+      lockScreen.style.opacity = Math.max(0, Math.min(1, lockOpacity)).toFixed(3);
+
+      // Start/stop CSS scroll animation
+      if (scrollOpacity > 0.05) {
+        scrollScr.classList.add('playing');
+      } else {
+        scrollScr.classList.remove('playing');
+      }
+
+      // Keep phone stationary and straight during scene 2
+      if (p > S.phoneFull && p < S.slideStart) {
+        phone.style.opacity   = '1';
+        phone.style.left      = '50%';
+        phone.style.top       = '50%';
+        phone.style.transform = 'translate(-50%,-50%) perspective(1200px) scale(1)';
+      }
     }
 
     // ── SCENE 3 · Phone slides to homepage ───────────────
     if (p >= S.slideStart) {
-      const s2p = easeIO(prog(p, S.slideStart, S.slideEnd));
+      // Reset scroll screen
+      if (scrollScr) scrollScr.style.opacity = '0';
+      if (lockScreen) lockScreen.style.opacity = '1';
+
+      const s3p = easeIO(prog(p, S.slideStart, S.slideEnd));
 
       if (!phoneTarget) phoneTarget = measurePhoneTarget();
 
@@ -120,9 +161,9 @@
         const scaleY   = phoneTarget.height / startH;
         const avgScale = (scaleX + scaleY) / 2;
 
-        const curL = lerp(startCX, targetCX, s2p);
-        const curT = lerp(startCY, targetCY, s2p);
-        const curS = lerp(1.0, avgScale, s2p);
+        const curL = lerp(startCX, targetCX, s3p);
+        const curT = lerp(startCY, targetCY, s3p);
+        const curS = lerp(1.0, avgScale, s3p);
 
         phone.style.opacity   = '1';
         phone.style.left      = curL + 'px';
@@ -130,14 +171,14 @@
         phone.style.transform =
           `translate(-50%,-50%) perspective(1200px) scale(${curS.toFixed(4)})`;
       } else {
-        phone.style.opacity = (1 - s2p).toFixed(3);
+        phone.style.opacity = (1 - s3p).toFixed(3);
       }
 
       // Portfolio fades in
       const mw = $('main-wrapper');
       if (mw) {
         mw.style.visibility = 'visible';
-        mw.style.opacity    = s2p.toFixed(3);
+        mw.style.opacity    = s3p.toFixed(3);
       }
 
       if (p >= 0.992 && !introDone) finishIntro();
@@ -212,13 +253,13 @@
 
   function onKeyDown(e) {
     if (introDone) return;
-    if (['ArrowDown','PageDown',' '].includes(e.key)) {
+    if (['ArrowDown', 'PageDown', ' '].includes(e.key)) {
       e.preventDefault();
-      targetProg = clamp(targetProg + 0.08, 0, 1);
+      targetProg = clamp(targetProg + 0.07, 0, 1);
     }
-    if (['ArrowUp','PageUp'].includes(e.key)) {
+    if (['ArrowUp', 'PageUp'].includes(e.key)) {
       e.preventDefault();
-      targetProg = clamp(targetProg - 0.08, 0, 1);
+      targetProg = clamp(targetProg - 0.07, 0, 1);
     }
   }
 
