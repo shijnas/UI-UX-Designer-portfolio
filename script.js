@@ -890,5 +890,51 @@ document.addEventListener('DOMContentLoaded', () => {
       // Start typing loop after 2 seconds
       setTimeout(typeEffect, 2000);
     }
+
+    // --- 6g. Dynamic 3-Phones Iframe Scaling System ---
+    function scaleIframes() {
+      const phones = document.querySelectorAll('.mock-phone');
+      phones.forEach(phone => {
+        const iframe = phone.querySelector('.phone-screen-iframe');
+        if (!iframe) return;
+        
+        // Get actual dimensions of the mock-phone frame (excluding border)
+        const borderW = parseFloat(window.getComputedStyle(phone).borderLeftWidth) || 6;
+        const phoneW = phone.clientWidth - (borderW * 2);
+        const phoneH = phone.clientHeight - (borderW * 2);
+        
+        // Base viewport size we want to render inside the iframe (standard mobile viewport)
+        const baseW = 375;
+        const baseH = 760;
+        
+        // Calculate required scale factor
+        const scaleX = phoneW / baseW;
+        const scaleY = phoneH / baseH;
+        const scale = Math.min(scaleX, scaleY);
+        
+        // Apply styling to iframe
+        iframe.style.width = baseW + 'px';
+        iframe.style.height = baseH + 'px';
+        iframe.style.transform = `scale(${scale.toFixed(4)})`;
+        iframe.style.transformOrigin = 'top left';
+        iframe.style.position = 'absolute';
+        
+        // Center the scaled iframe inside the phone screen
+        const offsetLeft = (phoneW - baseW * scale) / 2;
+        const offsetTop = (phoneH - baseH * scale) / 2;
+        iframe.style.left = offsetLeft.toFixed(1) + 'px';
+        iframe.style.top = offsetTop.toFixed(1) + 'px';
+      });
+    }
+
+    // Run scaling on load, resize, and orientation change
+    window.addEventListener('resize', scaleIframes);
+    window.addEventListener('load', scaleIframes);
+    scaleIframes();
+    
+    // Fallback trigger after short delays to ensure final dimensions are computed after dynamic contents load
+    setTimeout(scaleIframes, 500);
+    setTimeout(scaleIframes, 1500);
+    setTimeout(scaleIframes, 3000);
   }
 });
