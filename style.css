@@ -3051,6 +3051,16 @@ body.light-theme .shortcut-btn:active {
 .phone-screen-iframe {
   border: none;
   background: #06040d;
+  transition: filter 0.5s ease, background-color 0.5s ease;
+}
+
+body.light-theme .phone-screen-container,
+body.light-theme .phone-screen-iframe {
+  background: #f6f5f8;
+}
+
+body.light-theme .phone-screen-iframe {
+  filter: invert(0.9) hue-rotate(180deg);
 }
 
 /* Mobile responsive style */
