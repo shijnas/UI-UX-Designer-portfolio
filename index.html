@@ -24,10 +24,10 @@
   <svg class="liquid-glass-svg" style="position: absolute; width: 0; height: 0;" width="0" height="0" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <filter id="liquid-glass-filter">
-        <!-- Melt the sharp font edges using blur -->
-        <feGaussianBlur in="SourceGraphic" stdDeviation="4.5" result="blur" />
+        <!-- Melt the sharp font edges moderately to round the corners -->
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2.2" result="blur" />
         <!-- Sharpen it back to clean vector but with organic rounded corners -->
-        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 25 -10" result="gooey" />
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="gooey" />
         <!-- Composite to keep crisp high-contrast border details -->
         <feComposite in="SourceGraphic" in2="gooey" operator="atop" />
       </filter>
