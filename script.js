@@ -662,7 +662,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       // Position the main glass arrow instantly so clicking feels fast and accurate
-      cursorArrow.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+      const isHover = cursorArrow.classList.contains('hover');
+      const offsetX = isHover ? 12 : 4.5;
+      const offsetY = isHover ? 1.5 : 3;
+      cursorArrow.style.transform = `translate3d(${mouseX - offsetX}px, ${mouseY - offsetY}px, 0)`;
       
       // Trigger smooth trail LERP loop only if not currently running
       if (!isLoopActive) {
@@ -677,11 +680,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const diffX = mouseX - trailX;
       const diffY = mouseY - trailY;
       
+      const isHover = cursorArrow.classList.contains('hover');
+      const offsetX = isHover ? 12 : 4.5;
+      const offsetY = isHover ? 1.5 : 3;
+
       // Exit loop and save CPU/GPU resources if trail caught up and mouse is idle
       if (Math.abs(diffX) < 0.08 && Math.abs(diffY) < 0.08) {
         trailX = mouseX;
         trailY = mouseY;
-        cursorTrail.style.transform = `translate3d(${trailX}px, ${trailY}px, 0)`;
+        cursorTrail.style.transform = `translate3d(${trailX - offsetX}px, ${trailY - offsetY}px, 0)`;
         isLoopActive = false;
         return;
       }
@@ -689,7 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
       trailX += diffX * lerpFactor;
       trailY += diffY * lerpFactor;
       
-      cursorTrail.style.transform = `translate3d(${trailX}px, ${trailY}px, 0)`;
+      cursorTrail.style.transform = `translate3d(${trailX - offsetX}px, ${trailY - offsetY}px, 0)`;
       
       requestAnimationFrame(animateCursor);
     }

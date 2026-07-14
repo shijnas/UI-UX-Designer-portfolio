@@ -2825,7 +2825,7 @@ body.light-theme .sun-icon {
    Custom Liquid Glass Cursor (Arrow Pointer)
    ========================================================================== */
 @media (min-width: 769px) {
-  *, *::before, *::after {
+  html, body, *, *::before, *::after {
     cursor: none !important;
   }
 }
@@ -2859,13 +2859,32 @@ body.light-theme .sun-icon {
 }
 
 .cursor-glass-arrow svg, .cursor-glass-trail svg {
-  display: block;
   transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+.cursor-glass-arrow .liquid-arrow,
+.cursor-glass-trail .liquid-arrow-trail {
+  display: block;
+}
+
+.cursor-glass-arrow .liquid-hand,
+.cursor-glass-trail .liquid-hand-trail {
+  display: none;
+}
+
 /* Hovering state for interactive items */
+.cursor-glass-arrow.hover .liquid-arrow,
+.cursor-glass-trail.hover .liquid-arrow-trail {
+  display: none;
+}
+
+.cursor-glass-arrow.hover .liquid-hand,
+.cursor-glass-trail.hover .liquid-hand-trail {
+  display: block;
+}
+
 .cursor-glass-arrow.hover svg {
-  transform: scale(1.2);
+  transform: scale(1.15);
 }
 
 .cursor-glass-arrow.hover path {
@@ -2874,7 +2893,7 @@ body.light-theme .sun-icon {
 }
 
 .cursor-glass-trail.hover svg {
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
 @media (max-width: 768px) {
