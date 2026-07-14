@@ -54,12 +54,26 @@
     const bar = $('cin-progress-bar');
     if (bar) bar.style.width = (p * 100).toFixed(1) + '%';
 
-    // Title fade out & scale zoom based on progress
+    // Title watermark transition (fades to backdrop background, then fades out at slide)
     const title = $('cin-intro-title');
     if (title) {
-      const fade = prog(p, 0.0, 0.22);
-      title.style.opacity = (1 - fade).toFixed(3);
-      const scale = lerp(1.0, 0.85, fade);
+      let opacity = 1;
+      let scale = 1;
+      
+      if (p <= 0.3) {
+        const tP = prog(p, 0.0, 0.3);
+        opacity = lerp(1.0, 0.12, easeIO(tP));
+        scale = lerp(1.0, 0.88, easeIO(tP));
+      } else if (p > 0.3 && p <= 0.80) {
+        opacity = 0.12;
+        scale = 0.88;
+      } else {
+        const tP = prog(p, 0.80, 1.0);
+        opacity = lerp(0.12, 0.0, easeIO(tP));
+        scale = lerp(0.88, 0.80, easeIO(tP));
+      }
+      
+      title.style.opacity = opacity.toFixed(3);
       title.style.transform = `translate3d(-50%, -50%, 0) scale(${scale.toFixed(3)})`;
     }
 
