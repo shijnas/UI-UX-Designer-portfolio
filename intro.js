@@ -10,7 +10,7 @@
   'use strict';
 
   const CFG = {
-    lerpSpeed:         0.07,
+    lerpSpeed:         0.048,         // Decreased for silkier, smoother inertia glide
     scrollSensitivity: 0.00028,
     touchSensitivity:  0.00034,
   };
@@ -133,12 +133,33 @@
         mw.style.opacity    = s2p.toFixed(3);
       }
 
+      if (p >= 0.40) {
+        lazyLoadProjectIframes();
+      }
+
       if (p >= 0.992 && !introDone) finishIntro();
     }
   }
 
+  let iframesLoaded = false;
+  function lazyLoadProjectIframes() {
+    if (iframesLoaded) return;
+    iframesLoaded = true;
+    const iframes = document.querySelectorAll('.phone-screen-iframe');
+    iframes.forEach(iframe => {
+      const realSrc = iframe.getAttribute('data-src');
+      if (realSrc) {
+        iframe.setAttribute('src', realSrc);
+        iframe.onload = () => {
+          if (window.scaleIframes) window.scaleIframes();
+        };
+      }
+    });
+  }
+
   function finishIntro() {
     if (introDone) return;
+    lazyLoadProjectIframes(); // Fallback to load if skipped
     introDone = true;
 
     const phone = $('cin-phone');

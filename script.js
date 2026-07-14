@@ -930,6 +930,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Run scaling on load, resize, and orientation change
     window.addEventListener('resize', scaleIframes);
     window.addEventListener('load', scaleIframes);
+    window.scaleIframes = scaleIframes; // Expose globally to trigger on lazy load
     scaleIframes();
     
     // Fallback trigger after short delays to ensure final dimensions are computed after dynamic contents load
