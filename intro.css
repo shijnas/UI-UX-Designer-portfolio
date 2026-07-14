@@ -19,6 +19,7 @@ body.intro-active {
   background: #000;
   z-index: 99990;
   overflow: hidden;
+  contain: strict;                    /* isolate paint/layout from rest of page */
   will-change: opacity;
 }
 
@@ -100,7 +101,7 @@ body.intro-active {
     rgba(139, 92, 246, 0.4) 40%,
     transparent 70%);
   pointer-events: none;
-  will-change: transform, left, top;
+  will-change: transform;             /* removed left/top — use translate instead */
 }
 
 /* ── Tile Dissolve Grid ───────────────────────────────────── */
@@ -172,14 +173,21 @@ body.intro-active {
 
 /* ── Phone (Scene 5 & 6) ──────────────────────────────────── */
 #cin-phone {
-  position: absolute;
+  position: fixed;                    /* fixed avoids scroll-offset layout cost */
   z-index: 32;
   opacity: 0;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%) perspective(1200px) rotateY(38deg) rotateX(5deg) scale(0.55);
-  will-change: transform, opacity, left, top;
+  transform: translate3d(-50%, -50%, 0) perspective(1200px) rotateY(38deg) rotateX(5deg) scale(0.55);
+  will-change: transform, opacity;    /* only compositor-friendly props */
   transform-origin: center center;
+  backface-visibility: hidden;        /* avoid unnecessary back-face repaints */
+  -webkit-backface-visibility: hidden;
+}
+
+.cin-phone-body {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 /* ── Phone Scroll Screen (Scene 2 — portfolio preview) ─────── */

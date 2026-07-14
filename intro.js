@@ -28,6 +28,7 @@
   let introDone   = false;
   let phoneTarget = null;
   let touchY      = 0;
+  let isLooping   = false;            // prevent duplicate RAF chains
 
   const $ = id => document.getElementById(id);
 
@@ -56,7 +57,7 @@
     const phone = $('cin-phone');
     if (!phone) return;
 
-    // ── SCENE 1 · Phone materialises ─────────────────────
+      // ── SCENE 1 · Phone materialises ─────────────────────
     if (p <= S.phoneFull) {
       const s1p  = easeO4(prog(p, S.phoneIn, S.phoneFull));
       const rotY = lerp(38, 0, s1p);
@@ -64,10 +65,9 @@
       const sc   = lerp(0.55, 1.0, s1p);
 
       phone.style.opacity   = s1p.toFixed(3);
-      phone.style.left      = '50%';
-      phone.style.top       = '50%';
+      // Pure transform — no left/top writes (compositor-only, zero layout cost)
       phone.style.transform =
-        `translate(-50%,-50%) perspective(1200px) rotateY(${rotY.toFixed(2)}deg) rotateX(${rotX.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
+        `translate3d(-50%,-50%,0) perspective(1200px) rotateY(${rotY.toFixed(2)}deg) rotateX(${rotX.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
     }
 
     // Scroll hint
@@ -75,31 +75,31 @@
     if (sh) sh.style.opacity = p >= S.slideStart ? '0' : '1';
 
     // ── SCENE 2 · Phone slides to homepage ───────────────
-    if (p >= S.slideStart) {
+        if (p >= S.slideStart) {
       const s2p = easeIO(prog(p, S.slideStart, S.slideEnd));
 
       if (!phoneTarget) phoneTarget = measurePhoneTarget();
 
       if (phoneTarget) {
-        const startCX  = window.innerWidth  * 0.50;
-        const startCY  = window.innerHeight * 0.50;
         const phoneEl  = phone.querySelector('.cin-phone-body');
         const startW   = phoneEl ? phoneEl.offsetWidth  : 220;
         const startH   = phoneEl ? phoneEl.offsetHeight : 450;
 
+        // Target center relative to viewport (phone is position:fixed)
         const targetCX = phoneTarget.left + phoneTarget.width  / 2;
         const targetCY = phoneTarget.top  + phoneTarget.height / 2;
+        // Offset from the phone's fixed centre (50vw, 50vh)
+        const originCX = window.innerWidth  * 0.5;
+        const originCY = window.innerHeight * 0.5;
+        const dx = lerp(0, targetCX - originCX, s2p);
+        const dy = lerp(0, targetCY - originCY, s2p);
         const avgScale = ((phoneTarget.width / startW) + (phoneTarget.height / startH)) / 2;
-
-        const curL = lerp(startCX, targetCX, s2p);
-        const curT = lerp(startCY, targetCY, s2p);
         const curS = lerp(1.0, avgScale, s2p);
 
         phone.style.opacity   = '1';
-        phone.style.left      = curL + 'px';
-        phone.style.top       = curT + 'px';
+        // Single transform — no left/top writes at all
         phone.style.transform =
-          `translate(-50%,-50%) perspective(1200px) scale(${curS.toFixed(4)})`;
+          `translate3d(calc(-50% + ${dx.toFixed(1)}px), calc(-50% + ${dy.toFixed(1)}px), 0) perspective(1200px) scale(${curS.toFixed(4)})`;
       } else {
         phone.style.opacity = (1 - s2p).toFixed(3);
       }
@@ -119,7 +119,11 @@
     introDone = true;
 
     const phone = $('cin-phone');
-    if (phone) { phone.style.opacity = '0'; phone.style.pointerEvents = 'none'; }
+    if (phone) {
+      phone.style.willChange = 'auto';   // release GPU layer after done
+      phone.style.opacity = '0';
+      phone.style.pointerEvents = 'none';
+    }
 
     const mw = $('main-wrapper');
     if (mw) {
@@ -145,8 +149,23 @@
   }
 
   function loop() {
-    progress  += (targetProg - progress) * CFG.lerpSpeed;
-    updateScenes(progress);
+    const delta = Math.abs(targetProg - progress);
+    progress += (targetProg - progress) * CFG.lerpSpeed;
+
+    // Only update DOM when something is actually changing
+    if (delta > 0.0003) updateScenes(progress);
+
+    // Stop the loop when fully settled (saves GPU on idle)
+    if (delta > 0.00005 || progress < 0.9995) {
+      rafId = requestAnimationFrame(loop);
+    } else {
+      isLooping = false;
+    }
+  }
+
+  function scheduleLoop() {
+    if (isLooping || introDone) return;
+    isLooping = true;
     rafId = requestAnimationFrame(loop);
   }
 
@@ -154,6 +173,7 @@
     if (introDone) return;
     e.preventDefault();
     targetProg = clamp(targetProg + e.deltaY * CFG.scrollSensitivity, 0, 1);
+    scheduleLoop();
   }
 
   function onTouchStart(e) { if (!introDone) touchY = e.touches[0].clientY; }
@@ -164,6 +184,7 @@
     const dy   = touchY - e.touches[0].clientY;
     touchY     = e.touches[0].clientY;
     targetProg = clamp(targetProg + dy * CFG.touchSensitivity, 0, 1);
+    scheduleLoop();
   }
 
   function onKeyDown(e) {
@@ -174,10 +195,12 @@
     if (['ArrowUp', 'PageUp'].includes(e.key)) {
       e.preventDefault(); targetProg = clamp(targetProg - 0.07, 0, 1);
     }
+    scheduleLoop();
   }
 
   function skipIntro() {
     progress = 0.96; targetProg = 1.0;
+    scheduleLoop();
     setTimeout(finishIntro, 500);
   }
 
@@ -206,7 +229,7 @@
     const sh = $('cin-scroll-hint');
     if (sh) sh.classList.add('visible');
 
-    loop();
+    scheduleLoop();
   }
 
   if (document.readyState === 'loading') {
