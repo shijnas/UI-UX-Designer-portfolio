@@ -54,6 +54,15 @@
     const bar = $('cin-progress-bar');
     if (bar) bar.style.width = (p * 100).toFixed(1) + '%';
 
+    // Title fade out & scale zoom based on progress
+    const title = $('cin-intro-title');
+    if (title) {
+      const fade = prog(p, 0.0, 0.22);
+      title.style.opacity = (1 - fade).toFixed(3);
+      const scale = lerp(1.0, 0.85, fade);
+      title.style.transform = `translate3d(-50%, -50%, 0) scale(${scale.toFixed(3)})`;
+    }
+
     const phone = $('cin-phone');
     if (!phone) return;
 
