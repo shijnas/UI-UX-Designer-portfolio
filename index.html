@@ -13,10 +13,70 @@
   
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="style.css">
+  <!-- Cinematic Intro -->
+  <link rel="stylesheet" href="intro.css">
   <!-- Ezio AI Assistant -->
   <link rel="stylesheet" href="ezio-ai.css">
 </head>
 <body class="dark-theme">
+
+  <!-- ========================================================
+       CINEMATIC INTRO OVERLAY
+  ========================================================= -->
+  <div id="cinematic-intro">
+
+    <!-- Hero Images -->
+    <div id="cin-hero-layer">
+      <img id="cin-hero-front" class="cin-hero-img" src="assets/hero-suit-front.jpg" alt="" draggable="false">
+      <img id="cin-hero-side"  class="cin-hero-img" src="assets/hero-suit-side.jpg"  alt="" draggable="false">
+      <img id="cin-hero-real"  class="cin-hero-img" src="assets/hero-real.jpg"       alt="" draggable="false">
+    </div>
+
+    <!-- Purple Energy Glow -->
+    <div id="cin-energy"></div>
+
+    <!-- Ambient Floating Particles -->
+    <div id="cin-ambient-particles"></div>
+
+    <!-- Tile Dissolve Grid (built by JS) -->
+    <div id="cin-tile-grid"></div>
+
+    <!-- Emblem Pulse Rings (built by JS) -->
+    <div id="cin-pulse-container"></div>
+
+    <!-- Vignette -->
+    <div id="cin-vignette"></div>
+
+    <!-- Bottom gradient -->
+    <div id="cin-bottom-grad"></div>
+
+    <!-- Scene 5 — Phone -->
+    <div id="cin-phone">
+      <div class="cin-phone-body">
+        <div class="cin-phone-notch"></div>
+        <img class="cin-phone-wallpaper" src="assets/wallpaper.jpg" alt="Portfolio preview" draggable="false">
+      </div>
+    </div>
+
+    <!-- Scroll Hint -->
+    <div id="cin-scroll-hint">
+      <span>Scroll</span>
+      <div class="cin-scroll-mouse"></div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div id="cin-progress-bar"></div>
+
+  </div><!-- /#cinematic-intro -->
+
+  <!-- Skip Button (fixed position) -->
+  <button id="intro-skip-btn" aria-label="Skip intro">Skip &rarr;</button>
+
+  <!-- ========================================================
+       MAIN PORTFOLIO CONTENT
+  ========================================================= -->
+  <div id="main-wrapper">
+
   <!-- Glowing Background Ambience -->
   <div class="glow-bg glow-1"></div>
   <div class="glow-bg glow-2"></div>
@@ -1048,9 +1108,13 @@
     </svg>
   </div>
 
+  </div><!-- /#main-wrapper -->
+
   <!-- Main JavaScript File -->
   <script src="script.js"></script>
   <!-- Ezio AI Assistant -->
   <script src="ezio-ai.js"></script>
+  <!-- Cinematic Intro Engine (loaded last so portfolio is ready) -->
+  <script src="intro.js"></script>
 </body>
 </html>
