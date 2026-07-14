@@ -23,12 +23,12 @@
   // Scene breakpoints (scroll progress 0.0 → 1.0)
   const S = {
     phoneIn:     0.00,  // Phone starts fading in
-    phoneFull:   0.35,  // Phone fully upright, centred
-    scrollIn:    0.35,  // Scroll screen crossfades in
-    scrollFull:  0.45,  // Scroll screen fully visible + playing
-    scrollOut:   0.60,  // Scroll screen fades back out
-    lockIn:      0.60,  // Lock screen wallpaper comes back
-    slideStart:  0.65,  // Phone begins moving to homepage
+    phoneFull:   0.30,  // Phone fully upright, centred
+    scrollIn:    0.30,  // Scroll screen crossfades in
+    scrollFull:  0.38,  // Scroll screen fully visible + playing
+    scrollOut:   0.72,  // Scroll screen fades back out
+    lockIn:      0.78,  // Lock screen wallpaper comes back
+    slideStart:  0.80,  // Phone begins moving to homepage
     slideEnd:    1.00,  // Portfolio fully visible
   };
 
