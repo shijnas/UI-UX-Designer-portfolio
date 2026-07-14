@@ -102,11 +102,11 @@
         `translate(-50%,-50%) perspective(1200px) rotateY(${rotY.toFixed(2)}deg) rotateX(${rotX.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
     }
 
-    // Scroll hint
+    // Scroll hint — visible immediately, hides when phone slides away
     const sh = $('cin-scroll-hint');
     if (sh) {
-      const show = p > 0.12 && p < S.slideStart;
-      sh.style.opacity = show ? '1' : '0';
+      const hideHint = p >= S.slideStart;
+      sh.style.opacity = hideHint ? '0' : '1';
     }
 
     // ── SCENE 2 · Scrolling portfolio preview ────────────
@@ -298,7 +298,7 @@
     }
 
     const sh = $('cin-scroll-hint');
-    if (sh) setTimeout(() => sh.classList.add('visible'), 1500);
+    if (sh) sh.classList.add('visible'); // Show immediately on black screen
 
     loop();
   }
