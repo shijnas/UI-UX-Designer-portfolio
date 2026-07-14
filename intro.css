@@ -606,30 +606,21 @@ body.intro-active {
   opacity: 1;
 }
 
-/* UI/UX text: Liquid Glass Effect */
-.text-liquid-glass {
-  position: relative;
-  /* Round the font sharp edges organically like liquid glass drops using SVG Filter */
-  filter: url(#liquid-glass-filter) drop-shadow(0 8px 18px rgba(139, 92, 246, 0.45));
-  
-  /* Crystalline glass gradient with sharp horizon split simulation */
-  background: linear-gradient(
-    180deg,
-    #ffffff 0%,
-    rgba(255, 255, 255, 0.95) 30%,
-    rgba(255, 255, 255, 0.15) 47%,
-    rgba(255, 255, 255, 0.0) 50%,
-    rgba(168, 85, 247, 0.35) 53%,
-    rgba(168, 85, 247, 0.8) 85%,
-    #8b5cf6 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  
-  /* High-gloss speculative white edge border outline */
-  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.85);
-  letter-spacing: 0.05em;
-  padding-right: 0.1em;
+/* UI/UX Image: Liquid Glass Graphic */
+.img-liquid-glass {
+  height: 5.8rem;
+  vertical-align: middle;
+  display: inline-block;
+  margin-right: -0.1em;
+  margin-top: -0.5rem; /* subtle vertical offset to balance font baseline alignment */
+  filter: drop-shadow(0 8px 18px rgba(139, 92, 246, 0.45));
+}
+
+@media (max-width: 768px) {
+  .img-liquid-glass {
+    height: 3.0rem;
+    margin-top: -0.2rem;
+  }
 }
 
 /* Designer text: Purple Moving Gradient */
