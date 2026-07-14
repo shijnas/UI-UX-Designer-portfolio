@@ -9,21 +9,40 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedTheme = localStorage.getItem('theme');
   const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
 
+  const updateWallpapers = (isLight) => {
+    const cinPhoneLock = document.getElementById('cin-phone-lock');
+    const lockscreenWallpaper = document.getElementById('lockscreenWallpaper');
+    const lightPic = 'assets/wallpaper-light.jpg';
+    const darkPic = 'assets/wallpaper.jpg';
+    const currentPic = isLight ? lightPic : darkPic;
+
+    if (cinPhoneLock) {
+      cinPhoneLock.src = currentPic;
+    }
+    if (lockscreenWallpaper) {
+      lockscreenWallpaper.style.backgroundImage = `url('${currentPic}')`;
+    }
+  };
+
   if (savedTheme === 'light' || (!savedTheme && prefersLight)) {
     body.classList.add('light-theme');
     body.classList.remove('dark-theme');
+    updateWallpapers(true);
   } else {
     body.classList.add('dark-theme');
     body.classList.remove('light-theme');
+    updateWallpapers(false);
   }
 
   themeToggle.addEventListener('click', () => {
     if (body.classList.contains('dark-theme')) {
       body.classList.replace('dark-theme', 'light-theme');
       localStorage.setItem('theme', 'light');
+      updateWallpapers(true);
     } else {
       body.classList.replace('light-theme', 'dark-theme');
       localStorage.setItem('theme', 'dark');
+      updateWallpapers(false);
     }
   });
 
