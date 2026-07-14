@@ -606,21 +606,28 @@ body.intro-active {
   opacity: 1;
 }
 
-/* UI/UX Image: Liquid Glass Graphic */
-.img-liquid-glass {
-  height: 9.0rem;
-  vertical-align: middle;
-  display: inline-block;
-  margin-right: 0.1em;
-  margin-top: -1.5rem; /* offset to align center baseline with text */
-  filter: drop-shadow(0 8px 18px rgba(139, 92, 246, 0.45));
+/* UI/UX text: Liquid Glass Effect */
+.text-liquid-glass {
+  position: relative;
+  /* Round the font sharp edges organically like liquid glass drops using SVG Filter */
+  filter: url(#liquid-glass-filter) drop-shadow(0 8px 18px rgba(139, 92, 246, 0.45));
+  
+  /* White-to-Purple moving gradient */
+  background: linear-gradient(90deg, #ffffff, #e9d5ff, #c084fc, #a855f7, #ffffff);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine-move-white-purple 3.5s linear infinite;
+  
+  /* High-gloss speculative white edge border outline */
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.05em;
+  padding-right: 0.1em;
 }
 
-@media (max-width: 768px) {
-  .img-liquid-glass {
-    height: 4.8rem;
-    margin-top: -0.8rem;
-  }
+@keyframes shine-move-white-purple {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
 }
 
 /* Designer text: Purple Moving Gradient */
