@@ -3326,5 +3326,67 @@ body.light-theme .phone-screen-iframe {
   transition: opacity 0.3s ease;
 }
 
+/* Animated PC Fans inside Case */
+.pc-fan {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 50%;
+  aspect-ratio: 1 / 1 !important;
+  /* 4 rotating cyan fan blades */
+  background: conic-gradient(
+    from 0deg,
+    rgba(0, 229, 255, 0.4) 0deg 40deg,
+    transparent 40deg 90deg,
+    rgba(0, 229, 255, 0.4) 90deg 130deg,
+    transparent 130deg 180deg,
+    rgba(0, 229, 255, 0.4) 180deg 220deg,
+    transparent 220deg 270deg,
+    rgba(0, 229, 255, 0.4) 270deg 310deg,
+    transparent 310deg 360deg
+  );
+  mix-blend-mode: screen;
+  animation: fan-spin 4s linear infinite;
+  opacity: 0.75;
+  filter: blur(0.5px);
+}
+
+.fan-rear {
+  left: 62.6%;
+  top: 15.1%;
+  width: 6.8%;
+  animation-duration: 4.8s;
+}
+
+.fan-front-top {
+  left: 89.4%;
+  top: 26.2%;
+  width: 8.5%;
+  animation-duration: 3.5s;
+}
+
+.fan-front-mid {
+  left: 88.7%;
+  top: 43.2%;
+  width: 8.5%;
+  animation-duration: 4.0s;
+}
+
+.fan-front-bot {
+  left: 88.9%;
+  top: 57.3%;
+  width: 8.5%;
+  animation-duration: 3.7s;
+}
+
+@keyframes fan-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 
 
