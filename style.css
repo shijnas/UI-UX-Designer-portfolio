@@ -3301,13 +3301,13 @@ body.light-theme .phone-screen-iframe {
 
 .gametesting-screen-container {
   position: absolute;
-  /* Pixel-precise coordinates from POV gaming setup image (1376×768):
-     Monitor screen: left=423px (30.74%), top=136px (17.71%),
-     right=952px → width=529px (38.44%), bottom=450px → height=314px (40.89%) */
-  left: 30.74%;
-  top: 17.71%;
-  width: 38.44%;
-  height: 40.89%;
+  /* Pixel-precise coordinates from POV holding mouse setup image (1376×768):
+     Monitor screen: left=404px (29.36%), top=117px (15.23%),
+     right=964px → width=560px (40.7%), bottom=480px → height=363px (47.27%) */
+  left: 29.36%;
+  top: 15.23%;
+  width: 40.7%;
+  height: 47.27%;
   z-index: 2;
   overflow: hidden;
   background: #000 !important;
@@ -3332,9 +3332,9 @@ body.light-theme .phone-screen-iframe {
 /* Neon Sign Flickering Overlay */
 .gametesting-overlay-neon {
   position: absolute;
-  left: 66.86%; /* 920 / 1376 */
-  top: 0%;      /* 0 / 768 */
-  width: 17.44%; /* 240 / 1376 */
+  left: 12.35%; /* 170 / 1376 */
+  top: 2.21%;   /* 17 / 768 */
+  width: 18.9%;  /* 260 / 1376 */
   height: 23.44%; /* 180 / 768 */
   z-index: 1;
   pointer-events: none;
@@ -3353,16 +3353,16 @@ body.light-theme .phone-screen-iframe {
 }
 
 .gametesting-overlay-fan.fan-front-top {
-  left: 89.97%; /* (1294 - 56) / 1376 */
-  top: 24.87%;  /* (247 - 56) / 768 */
+  left: 93.24%; /* (1339 - 56) / 1376 */
+  top: 23.05%;  /* (233 - 56) / 768 */
   width: 8.14%;  /* 112 / 1376 */
   height: 14.58%; /* 112 / 768 */
   transform-origin: center center;
 }
 
 .gametesting-overlay-fan.fan-front-middle {
-  left: 89.75%; /* (1291 - 56) / 1376 */
-  top: 40.49%;  /* (367 - 56) / 768 */
+  left: 92.3%;  /* (1326 - 56) / 1376 */
+  top: 38.54%;  /* (352 - 56) / 768 */
   width: 8.14%;  /* 112 / 1376 */
   height: 14.58%; /* 112 / 768 */
   transform-origin: center center;
@@ -3371,8 +3371,8 @@ body.light-theme .phone-screen-iframe {
 }
 
 .gametesting-overlay-fan.fan-front-bottom {
-  left: 89.46%; /* (1287 - 56) / 1376 */
-  top: 55.73%;  /* (484 - 56) / 768 */
+  left: 93.1%;  /* (1337 - 56) / 1376 */
+  top: 54.69%;  /* (476 - 56) / 768 */
   width: 8.14%;  /* 112 / 1376 */
   height: 14.58%; /* 112 / 768 */
   transform-origin: center center;
@@ -3380,8 +3380,8 @@ body.light-theme .phone-screen-iframe {
 }
 
 .gametesting-overlay-fan.fan-rear {
-  left: 73.18%; /* (1055 - 48) / 1376 */
-  top: 30.86%;  /* (285 - 48) / 768 */
+  left: 76.45%; /* (1100 - 48) / 1376 */
+  top: 29.3%;   /* (273 - 48) / 768 */
   width: 6.98%;  /* 96 / 1376 */
   height: 12.5%;  /* 96 / 768 */
   transform-origin: center center;

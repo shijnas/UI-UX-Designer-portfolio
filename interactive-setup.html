@@ -25,14 +25,14 @@
       display: block;
     }
     /* Monitor screen bounds from pixel scan:
-       Left=423 (30.74%), Top=136 (17.71%), Right=952, Bottom=450
-       Width=529 (38.44%), Height=314 (40.89%) */
+       Left=404 (29.36%), Top=117 (15.23%), Right=964, Bottom=480
+       Width=560 (40.7%), Height=363 (47.27%) */
     .monitor {
       position: absolute;
-      left: 30.74%;
-      top: 17.71%;
-      width: 38.44%;
-      height: 40.89%;
+      left: 29.36%;
+      top: 15.23%;
+      width: 40.7%;
+      height: 47.27%;
       overflow: hidden;
       z-index: 1;
     }
@@ -46,9 +46,9 @@
     /* Neon Sign Flickering Overlay */
     .overlay-neon {
       position: absolute;
-      left: 66.86%; /* 920 / 1376 */
-      top: 0%;      /* 0 / 768 */
-      width: 17.44%; /* 240 / 1376 */
+      left: 12.35%; /* 170 / 1376 */
+      top: 2.21%;   /* 17 / 768 */
+      width: 18.9%;  /* 260 / 1376 */
       height: 23.44%; /* 180 / 768 */
       z-index: 1;
       pointer-events: none;
@@ -64,22 +64,22 @@
       animation: fan-spin 18s linear infinite;
     }
     .overlay-fan.fan-front-top {
-      left: 89.97%; top: 24.87%; width: 8.14%; height: 14.58%;
+      left: 93.24%; top: 23.05%; width: 8.14%; height: 14.58%;
       transform-origin: center center;
     }
     .overlay-fan.fan-front-middle {
-      left: 89.75%; top: 40.49%; width: 8.14%; height: 14.58%;
+      left: 92.3%; top: 38.54%; width: 8.14%; height: 14.58%;
       transform-origin: center center;
       animation-duration: 22s;
       animation-direction: reverse;
     }
     .overlay-fan.fan-front-bottom {
-      left: 89.46%; top: 55.73%; width: 8.14%; height: 14.58%;
+      left: 93.1%; top: 54.69%; width: 8.14%; height: 14.58%;
       transform-origin: center center;
       animation-duration: 20s;
     }
     .overlay-fan.fan-rear {
-      left: 73.18%; top: 30.86%; width: 6.98%; height: 12.5%;
+      left: 76.45%; top: 29.3%; width: 6.98%; height: 12.5%;
       transform-origin: center center;
       animation-duration: 16s;
       animation-direction: reverse;
