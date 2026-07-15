@@ -43,11 +43,76 @@
       display: block;
       background: #000;
     }
+    /* Neon Sign Flickering Overlay */
+    .overlay-neon {
+      position: absolute;
+      left: 66.86%; /* 920 / 1376 */
+      top: 0%;      /* 0 / 768 */
+      width: 17.44%; /* 240 / 1376 */
+      height: 23.44%; /* 180 / 768 */
+      z-index: 1;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      animation: neon-flicker 5s infinite;
+    }
+    /* Fan Rotating Overlays */
+    .overlay-fan {
+      position: absolute;
+      z-index: 1;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      animation: fan-spin 18s linear infinite;
+    }
+    .overlay-fan.fan-front-top {
+      left: 89.97%; top: 24.87%; width: 8.14%; height: 14.58%;
+      transform-origin: center center;
+    }
+    .overlay-fan.fan-front-middle {
+      left: 89.75%; top: 40.49%; width: 8.14%; height: 14.58%;
+      transform-origin: center center;
+      animation-duration: 22s;
+      animation-direction: reverse;
+    }
+    .overlay-fan.fan-front-bottom {
+      left: 89.46%; top: 55.73%; width: 8.14%; height: 14.58%;
+      transform-origin: center center;
+      animation-duration: 20s;
+    }
+    .overlay-fan.fan-rear {
+      left: 73.18%; top: 30.86%; width: 6.98%; height: 12.5%;
+      transform-origin: center center;
+      animation-duration: 16s;
+      animation-direction: reverse;
+    }
+    @keyframes fan-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes neon-flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.8)) drop-shadow(0 0 30px rgba(0, 229, 255, 0.4));
+      }
+      20%, 24%, 55% {
+        opacity: 0.3;
+        filter: none;
+      }
+      22% {
+        opacity: 0.7;
+        filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.4));
+      }
+    }
   </style>
 </head>
 <body>
   <div class="scene">
     <img class="bg" src="assets/gaming-setup-pov.jpg" alt="">
+    <!-- Animated Fan & Neon Sign Overlays -->
+    <img class="overlay-neon" src="assets/neon-sign.png" alt="">
+    <img class="overlay-fan fan-front-top" src="assets/fan-front-top.png" alt="">
+    <img class="overlay-fan fan-front-middle" src="assets/fan-front-middle.png" alt="">
+    <img class="overlay-fan fan-front-bottom" src="assets/fan-front-bottom.png" alt="">
+    <img class="overlay-fan fan-rear" src="assets/fan-rear.png" alt="">
     <div class="monitor">
       <iframe
         src="https://shijnas-yunus-portfolio1.vercel.app/"
