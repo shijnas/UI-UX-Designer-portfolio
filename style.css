@@ -3157,7 +3157,9 @@ body.light-theme .phone-screen-iframe {
 .project-mac-interactive {
   position: relative;
   overflow: hidden;
+  aspect-ratio: 1024 / 738 !important;
 }
+
 
 .mac-screen-container {
   position: absolute;
