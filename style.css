@@ -3265,13 +3265,12 @@ body.light-theme .phone-screen-iframe {
 
 .ezio-screen-container {
   position: absolute;
-  /* Pixel-precise coordinates from GODD CASINO slot machine image (1024×819):
-     Screen: left=166px (16.25%), top=213px (26.04%),
-     right=892px → width=725px (70.83%), bottom=633px → height=420px (51.3%) */
-  left: 16.25%;
-  top: 26.04%;
-  width: 70.83%;
-  height: 51.3%;
+  /* Browser-measured coordinates from slots card in the page:
+     Screen: left=10.95%, top=5.16%, width=87.75%, height=85.54% */
+  left: 10.95%;
+  top: 5.16%;
+  width: 87.75%;
+  height: 85.54%;
   z-index: 2;
   overflow: hidden;
   background: #000 !important;
