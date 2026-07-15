@@ -3348,8 +3348,8 @@ body.light-theme .phone-screen-iframe {
   z-index: 1;
   pointer-events: none;
   mix-blend-mode: screen;
-  /* Rotate fans slowly */
-  animation: fan-spin 18s linear infinite;
+  /* Rotate fans */
+  animation: fan-spin 6s linear infinite;
   filter: drop-shadow(0 0 2px rgba(0, 229, 255, 0.8));
 }
 
@@ -3367,7 +3367,7 @@ body.light-theme .phone-screen-iframe {
   width: 8.14%;  /* 112 / 1376 */
   height: 14.58%; /* 112 / 768 */
   transform-origin: center center;
-  animation-duration: 22s;
+  animation-duration: 8s;
   animation-direction: reverse;
 }
 
@@ -3377,7 +3377,7 @@ body.light-theme .phone-screen-iframe {
   width: 8.14%;  /* 112 / 1376 */
   height: 14.58%; /* 112 / 768 */
   transform-origin: center center;
-  animation-duration: 20s;
+  animation-duration: 7s;
 }
 
 .gametesting-overlay-fan.fan-rear {
@@ -3386,7 +3386,7 @@ body.light-theme .phone-screen-iframe {
   width: 6.98%;  /* 96 / 1376 */
   height: 12.5%;  /* 96 / 768 */
   transform-origin: center center;
-  animation-duration: 16s;
+  animation-duration: 5s;
   animation-direction: reverse;
 }
 
