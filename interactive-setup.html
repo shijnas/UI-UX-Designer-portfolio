@@ -3,234 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Gaming Setup — Shijnas Yunus</title>
+  <title>Shijnas Yunus — Interactive Gaming Setup</title>
   <style>
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       background: #000;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
-
-    /*
-      Scene container holds the background image and iframe overlay.
-      Native image resolution: 1376 x 768 → ratio = 179.17/100
-      We keep the scene at this exact aspect ratio at all times.
-    */
     .scene {
       position: relative;
-      /* Fill viewport while preserving 1376:768 aspect ratio */
       width: min(100vw, calc(100vh * 1376 / 768));
       height: min(100vh, calc(100vw * 768 / 1376));
-      flex-shrink: 0;
     }
-
-    /* Full-scene gaming setup background */
-    .scene-bg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
+    .bg {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
       object-fit: fill;
       pointer-events: none;
-      user-select: none;
       display: block;
-      z-index: 0;
     }
-
-    /*
-      Monitor screen overlay — precisely mapped from pixel analysis.
-
-      Image natural: 1376 × 768 px
-      Monitor screen corners (pixel coordinates):
-        Top-Left     : (150, 119)  →  10.9%, 15.5%
-        Top-Right    : (806, 122)  →  58.6%, 15.9%
-        Bottom-Left  : (150, 537)  →  10.9%, 69.9%
-        Bottom-Right : (806, 537)  →  58.6%, 69.9%
-
-      The screen is slightly angled (front-left perspective).
-      We use CSS clip-path + perspective transform to match it.
-
-      Bounding box for the iframe div:
-        left   = 10.9%
-        top    = 15.5%
-        width  = 58.6% - 10.9% = 47.7%
-        height = 69.9% - 15.5% = 54.4%
-
-      The slight right-side rise (top-right is ~3px higher than top-left)
-      is handled by the clip-path trapezoid polygon.
-    */
-    .monitor-overlay {
+    /* Monitor screen bounds from pixel scan:
+       Left=423 (30.74%), Top=136 (17.71%), Right=952, Bottom=450
+       Width=529 (38.44%), Height=314 (40.89%) */
+    .monitor {
       position: absolute;
-      left:   10.9%;
-      top:    15.5%;
-      width:  47.7%;
-      height: 54.4%;
-      z-index: 1;
+      left: 30.74%;
+      top: 17.71%;
+      width: 38.44%;
+      height: 40.89%;
       overflow: hidden;
-
-      /*
-        perspective + slight Y-axis rotation to match the monitor's viewing angle.
-        The monitor in the photo faces slightly right (~5deg).
-      */
-      transform-origin: left center;
-      transform: perspective(2000px) rotateY(5deg) rotateX(-0.3deg);
-
-      /*
-        clip-path trapezoid: TL, TR, BR, BL
-        Top edge: TL at 0%/0%, TR at 100%/0.55% (rises ~3px over 656px = 0.46%)
-        Bottom edge: perfectly flat
-      */
-      clip-path: polygon(
-        0% 0%,
-        100% 0.55%,
-        100% 100%,
-        0%   100%
-      );
-
-      border-radius: 2px;
-
-      /* Smooth fade-in */
-      opacity: 0;
-      animation: fadeIn 1s ease 0.6s forwards;
+      z-index: 1;
     }
-
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-
-    .monitor-iframe {
+    .monitor iframe {
       width: 100%;
       height: 100%;
       border: none;
       display: block;
       background: #000;
     }
-
-    /*
-      Ambient screen glow layered above the iframe — adds realism by softly 
-      masking the edge border between the iframe and the monitor bezel.
-      pointer-events: none so clicks pass through to the iframe.
-    */
-    .monitor-glow {
-      position: absolute;
-      left:   10.9%;
-      top:    15.5%;
-      width:  47.7%;
-      height: 54.4%;
-      z-index: 2;
-      pointer-events: none;
-      border-radius: 2px;
-      transform-origin: left center;
-      transform: perspective(2000px) rotateY(5deg) rotateX(-0.3deg);
-      clip-path: polygon(0% 0%, 100% 0.55%, 100% 100%, 0% 100%);
-      /* Subtle vignette on the sides/top to blend with the bezel */
-      background: radial-gradient(
-        ellipse at center,
-        transparent 60%,
-        rgba(0, 0, 0, 0.35) 100%
-      );
-    }
-
-    /* Tooltip hint that fades out */
-    .hint {
-      position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 229, 255, 0.1);
-      border: 1px solid rgba(0, 229, 255, 0.35);
-      color: rgba(0, 229, 255, 0.9);
-      font-family: 'Inter', -apple-system, system-ui, sans-serif;
-      font-size: clamp(9px, 1.1vw, 13px);
-      padding: 5px 16px;
-      border-radius: 20px;
-      backdrop-filter: blur(8px);
-      letter-spacing: 0.4px;
-      pointer-events: none;
-      white-space: nowrap;
-      z-index: 10;
-      animation: hintFade 4s ease 2s forwards;
-    }
-
-    @keyframes hintFade {
-      0%   { opacity: 1; }
-      70%  { opacity: 1; }
-      100% { opacity: 0; }
-    }
   </style>
 </head>
 <body>
-
-  <div class="scene" id="scene">
-
-    <!-- Gaming setup background image -->
-    <img
-      class="scene-bg"
-      src="assets/gaming-setup-v2.jpg"
-      alt="Shijnas Yunus Gaming Setup"
-      draggable="false"
-    >
-
-    <!-- Live interactive portfolio iframe precisely over the OLED monitor screen -->
-    <div class="monitor-overlay" id="monitorOverlay">
+  <div class="scene">
+    <img class="bg" src="assets/gaming-setup-pov.jpg" alt="">
+    <div class="monitor">
       <iframe
-        class="monitor-iframe"
         src="https://shijnas-yunus-portfolio1.vercel.app/"
-        title="Shijnas Yunus — Live Portfolio"
-        allow="fullscreen; autoplay"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation allow-pointer-lock"
-        referrerpolicy="no-referrer"
+        title="Shijnas Yunus Portfolio"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"
       ></iframe>
     </div>
-
-    <!-- Ambient vignette glow to blend iframe edges into bezel -->
-    <div class="monitor-glow"></div>
-
-    <!-- One-time hint tooltip -->
-    <div class="hint" id="hint">
-      🖱️ Click the monitor to interact with the live portfolio
-    </div>
-
   </div>
-
   <script>
-    // Dynamically scale the scene to fill the viewport on any screen size
     function resize() {
-      const scene = document.getElementById('scene');
-      const vpW = window.innerWidth;
-      const vpH = window.innerHeight;
-      const ratio = 1376 / 768;
-      let sw, sh;
-      if (vpW / vpH > ratio) {
-        sh = vpH;
-        sw = sh * ratio;
-      } else {
-        sw = vpW;
-        sh = sw / ratio;
-      }
-      scene.style.width  = sw + 'px';
-      scene.style.height = sh + 'px';
+      const s = document.querySelector('.scene');
+      const r = 1376/768, vw = window.innerWidth, vh = window.innerHeight;
+      if (vw/vh > r) { s.style.width = vh*r+'px'; s.style.height = vh+'px'; }
+      else { s.style.width = vw+'px'; s.style.height = vw/r+'px'; }
     }
-
-    resize();
-    window.addEventListener('resize', resize);
-
-    // Hide hint after it fades
-    setTimeout(() => {
-      const hint = document.getElementById('hint');
-      if (hint) hint.style.display = 'none';
-    }, 6500);
+    resize(); window.addEventListener('resize', resize);
   </script>
-
 </body>
 </html>
