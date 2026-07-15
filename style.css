@@ -3201,7 +3201,7 @@ body.light-theme .phone-screen-iframe {
   left: 22.35%;
   top: 8.3%;
   width: 55.3%;
-  height: 83.1%;
+  height: 84.5%;
   z-index: 2;
   overflow: hidden;
   background: #070b19 !important; /* Match Wanderlust theme dark background */
@@ -3209,6 +3209,7 @@ body.light-theme .phone-screen-iframe {
   outline: none !important;
   box-shadow: none !important;
 }
+
 
 .travel-screen-iframe {
   position: absolute;
