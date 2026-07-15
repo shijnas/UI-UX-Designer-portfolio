@@ -3298,23 +3298,19 @@ body.light-theme .phone-screen-iframe {
 
 .gametesting-screen-container {
   position: absolute;
-  /* Pixel-precise coordinates from V2 gaming setup image (1376×768):
-     Monitor screen: left=150px (10.9%), top=119px (15.5%),
-     right=806px → width=656px (47.7%), bottom=537px → height=418px (54.4%) */
-  left: 10.9%;
-  top: 15.5%;
-  width: 47.7%;
-  height: 54.4%;
+  /* Pixel-precise coordinates from POV gaming setup image (1376×768):
+     Monitor screen: left=423px (30.74%), top=136px (17.71%),
+     right=952px → width=529px (38.44%), bottom=450px → height=314px (40.89%) */
+  left: 30.74%;
+  top: 17.71%;
+  width: 38.44%;
+  height: 40.89%;
   z-index: 2;
   overflow: hidden;
   background: #000 !important;
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
-  /* Slight perspective tilt to match the monitor's angle in the photo */
-  transform-origin: left center;
-  transform: perspective(2000px) rotateY(5deg) rotateX(-0.3deg);
-  clip-path: polygon(0% 0%, 100% 0.55%, 100% 100%, 0% 100%);
   border-radius: 2px;
 }
 
