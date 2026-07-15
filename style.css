@@ -3161,10 +3161,10 @@ body.light-theme .phone-screen-iframe {
 
 .mac-screen-container {
   position: absolute;
-  left: 17.578%;
-  top: 12.212%;
+  left: 18.652%;
+  top: 12.331%;
   width: 62.207%;
-  height: 50.339%;
+  height: 50.271%;
   z-index: 2;
   overflow: hidden;
   background: #09090b !important; /* Match dashboard theme background */
@@ -3172,6 +3172,7 @@ body.light-theme .phone-screen-iframe {
   outline: none !important;
   box-shadow: none !important;
 }
+
 
 .mac-screen-iframe {
   position: absolute;
