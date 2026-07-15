@@ -3350,6 +3350,7 @@ body.light-theme .phone-screen-iframe {
   mix-blend-mode: screen;
   /* Rotate fans slowly */
   animation: fan-spin 18s linear infinite;
+  filter: drop-shadow(0 0 2px rgba(0, 229, 255, 0.8));
 }
 
 .gametesting-overlay-fan.fan-front-top {
