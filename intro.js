@@ -142,19 +142,55 @@
     }
   }
 
-  let iframesLoaded = false;
+  let iframesInitialized = false;
   function lazyLoadProjectIframes() {
-    if (iframesLoaded) return;
-    iframesLoaded = true;
-    const iframes = document.querySelectorAll('.phone-screen-iframe, .mac-screen-iframe, .travel-screen-iframe, .health-screen-iframe, .ezio-screen-iframe, .gametesting-screen-iframe');
-    iframes.forEach(iframe => {
+    if (iframesInitialized) return;
+    iframesInitialized = true;
+    
+    const cards = document.querySelectorAll('.project-card');
+    cards.forEach(card => {
+      const iframe = card.querySelector('.phone-screen-iframe, .mac-screen-iframe, .travel-screen-iframe, .health-screen-iframe, .ezio-screen-iframe, .gametesting-screen-iframe');
+      if (!iframe) return;
+      
       const realSrc = iframe.getAttribute('data-src');
-      if (realSrc) {
-        iframe.setAttribute('src', realSrc);
-        iframe.onload = () => {
-          if (window.scaleIframes) window.scaleIframes();
-        };
-      }
+      if (!realSrc) return;
+      
+      let loadTimeout = null;
+      
+      card.addEventListener('mouseenter', () => {
+        // 200ms debounce prevents loading on quick scroll mouseovers
+        loadTimeout = setTimeout(() => {
+          if (iframe.getAttribute('src') === 'about:blank' || !iframe.getAttribute('src')) {
+            iframe.setAttribute('src', realSrc);
+            iframe.onload = () => {
+              if (window.scaleIframes) window.scaleIframes();
+            };
+          }
+        }, 200);
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        if (loadTimeout) clearTimeout(loadTimeout);
+        // Unload the iframe immediately to free up GPU and memory!
+        iframe.setAttribute('src', 'about:blank');
+      });
+      
+      // Touch support for mobile devices
+      card.addEventListener('touchstart', () => {
+        // Unload all other active iframes to save mobile memory/GPU
+        document.querySelectorAll('.phone-screen-iframe, .mac-screen-iframe, .travel-screen-iframe, .health-screen-iframe, .ezio-screen-iframe, .gametesting-screen-iframe').forEach(otherIframe => {
+          if (otherIframe !== iframe) {
+            otherIframe.setAttribute('src', 'about:blank');
+          }
+        });
+        
+        if (iframe.getAttribute('src') === 'about:blank' || !iframe.getAttribute('src')) {
+          iframe.setAttribute('src', realSrc);
+          iframe.onload = () => {
+            if (window.scaleIframes) window.scaleIframes();
+          };
+        }
+      }, { passive: true });
     });
   }
 
