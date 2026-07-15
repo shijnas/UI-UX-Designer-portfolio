@@ -3198,10 +3198,10 @@ body.light-theme .phone-screen-iframe {
 
 .travel-screen-container {
   position: absolute;
-  left: 22.35%;
-  top: 8.3%;
-  width: 55.3%;
-  height: 84.5%;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
   z-index: 2;
   overflow: hidden;
   background: #070b19 !important; /* Match Wanderlust theme dark background */
@@ -3209,7 +3209,6 @@ body.light-theme .phone-screen-iframe {
   outline: none !important;
   box-shadow: none !important;
 }
-
 
 .travel-screen-iframe {
   position: absolute;
@@ -3222,4 +3221,5 @@ body.light-theme .phone-screen-iframe {
   pointer-events: auto; /* Allow users to click and interact with the live app */
   transition: opacity 0.3s ease;
 }
+
 
