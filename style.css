@@ -3198,9 +3198,9 @@ body.light-theme .phone-screen-iframe {
 
 .travel-screen-container {
   position: absolute;
-  left: 24.167%;
+  left: 22.35%;
   top: 8.3%;
-  width: 53.333%;
+  width: 55.3%;
   height: 83.1%;
   z-index: 2;
   overflow: hidden;
@@ -3209,7 +3209,6 @@ body.light-theme .phone-screen-iframe {
   outline: none !important;
   box-shadow: none !important;
 }
-
 
 .travel-screen-iframe {
   position: absolute;
