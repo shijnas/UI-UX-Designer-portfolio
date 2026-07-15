@@ -3164,7 +3164,7 @@ body.light-theme .phone-screen-iframe {
   height: 50.339%;
   z-index: 2;
   overflow: hidden;
-  background: transparent;
+  background: #09090b; /* Match dashboard theme background */
 }
 
 .mac-screen-iframe {
@@ -3172,7 +3172,7 @@ body.light-theme .phone-screen-iframe {
   left: 0;
   top: 0;
   border: none;
-  background: transparent;
+  background: #09090b; /* Match dashboard theme background */
   pointer-events: auto; /* Allow users to click and interact with the live app */
   transition: opacity 0.3s ease;
 }
