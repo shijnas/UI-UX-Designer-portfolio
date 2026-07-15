@@ -951,6 +951,30 @@ document.addEventListener('DOMContentLoaded', () => {
         iframe.style.left = offsetLeft.toFixed(1) + 'px';
         iframe.style.top = offsetTop.toFixed(1) + 'px';
       });
+
+      // Scale Mac Studio Display screen iframe
+      const macContainer = document.querySelector('.mac-screen-container');
+      if (macContainer) {
+        const iframe = macContainer.querySelector('.mac-screen-iframe');
+        if (iframe) {
+          const containerW = macContainer.clientWidth;
+          const containerH = macContainer.clientHeight;
+          if (containerW > 0 && containerH > 0) {
+            // Render natively at widescreen desktop width (1280px)
+            const baseW = 1280;
+            const baseH = Math.round(baseW * (containerH / containerW)) || 745;
+            const scale = containerW / baseW;
+
+            iframe.style.width = baseW + 'px';
+            iframe.style.height = baseH + 'px';
+            iframe.style.transform = `scale(${scale.toFixed(4)})`;
+            iframe.style.transformOrigin = 'top left';
+            iframe.style.position = 'absolute';
+            iframe.style.left = '0';
+            iframe.style.top = '0';
+          }
+        }
+      }
     }
 
     // Run scaling on load, resize, and orientation change
