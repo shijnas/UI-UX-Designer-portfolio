@@ -3367,37 +3367,37 @@ body.light-theme .phone-screen-iframe {
 }
 
 .gametesting-overlay-fan.fan-front-top {
-  left: 92.08%; /* (1339 - 72) / 1376 */
-  top: 20.96%;  /* (233 - 72) / 768 */
-  width: 10.46%;  /* 144 / 1376 */
-  height: 18.75%; /* 144 / 768 */
+  left: 91.5%;   /* (1339 - 80) / 1376 */
+  top: 19.92%;   /* (233 - 80) / 768 */
+  width: 11.63%;  /* 160 / 1376 */
+  height: 20.83%; /* 160 / 768 */
   transform-origin: center center;
 }
 
 .gametesting-overlay-fan.fan-front-middle {
-  left: 91.13%; /* (1326 - 72) / 1376 */
-  top: 36.46%;  /* (352 - 72) / 768 */
-  width: 10.46%;  /* 144 / 1376 */
-  height: 18.75%; /* 144 / 768 */
+  left: 90.55%;  /* (1326 - 80) / 1376 */
+  top: 35.42%;  /* (352 - 80) / 768 */
+  width: 11.63%;  /* 160 / 1376 */
+  height: 20.83%; /* 160 / 768 */
   transform-origin: center center;
   animation-duration: 8s;
   animation-direction: reverse;
 }
 
 .gametesting-overlay-fan.fan-front-bottom {
-  left: 91.93%; /* (1337 - 72) / 1376 */
-  top: 52.6%;   /* (476 - 72) / 768 */
-  width: 10.46%;  /* 144 / 1376 */
-  height: 18.75%; /* 144 / 768 */
+  left: 91.35%;  /* (1337 - 80) / 1376 */
+  top: 51.56%;  /* (476 - 80) / 768 */
+  width: 11.63%;  /* 160 / 1376 */
+  height: 20.83%; /* 160 / 768 */
   transform-origin: center center;
   animation-duration: 7s;
 }
 
 .gametesting-overlay-fan.fan-rear {
-  left: 75.29%; /* (1100 - 64) / 1376 */
-  top: 27.21%;  /* (273 - 64) / 768 */
-  width: 9.3%;    /* 128 / 1376 */
-  height: 16.67%; /* 128 / 768 */
+  left: 74.71%;  /* (1100 - 72) / 1376 */
+  top: 26.17%;  /* (273 - 72) / 768 */
+  width: 10.46%;  /* 144 / 1376 */
+  height: 18.75%; /* 144 / 768 */
   transform-origin: center center;
   animation-duration: 5s;
   animation-direction: reverse;
