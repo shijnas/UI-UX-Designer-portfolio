@@ -54,6 +54,8 @@
       pointer-events: none;
       mix-blend-mode: screen;
       animation: neon-flicker 5s infinite;
+      will-change: opacity;
+      transform: translateZ(0);
     }
     /* Fan Rotating Overlays */
     .overlay-fan {
@@ -62,47 +64,44 @@
       pointer-events: none;
       mix-blend-mode: screen;
       animation: fan-spin 6s linear infinite;
-      filter: drop-shadow(0 0 2px rgba(0, 229, 255, 0.8));
+      will-change: transform;
+      transform: translateZ(0);
     }
     .overlay-fan.fan-front-top {
-      left: 93.24%; top: 23.05%; width: 8.14%; height: 14.58%;
+      left: 92.08%; top: 20.96%; width: 10.46%; height: 18.75%;
       transform-origin: center center;
     }
     .overlay-fan.fan-front-middle {
-      left: 92.3%; top: 38.54%; width: 8.14%; height: 14.58%;
+      left: 91.13%; top: 36.46%; width: 10.46%; height: 18.75%;
       transform-origin: center center;
       animation-duration: 8s;
       animation-direction: reverse;
     }
     .overlay-fan.fan-front-bottom {
-      left: 93.1%; top: 54.69%; width: 8.14%; height: 14.58%;
+      left: 91.93%; top: 52.6%; width: 10.46%; height: 18.75%;
       transform-origin: center center;
       animation-duration: 7s;
     }
     .overlay-fan.fan-rear {
-      left: 76.45%; top: 29.3%; width: 6.98%; height: 12.5%;
+      left: 75.29%; top: 27.21%; width: 9.3%; height: 16.67%;
       transform-origin: center center;
       animation-duration: 5s;
       animation-direction: reverse;
     }
     @keyframes fan-spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      from { transform: translateZ(0) rotate(0deg); }
+      to { transform: translateZ(0) rotate(360deg); }
     }
     @keyframes neon-flicker {
       0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
         opacity: 1;
-        filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.8)) drop-shadow(0 0 30px rgba(0, 229, 255, 0.4));
       }
       20%, 24%, 55% {
-        opacity: 0.3;
-        filter: none;
+        opacity: 0.35;
       }
       22% {
-        opacity: 0.7;
-        filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.4));
+        opacity: 0.75;
       }
-    }
   </style>
 </head>
 <body>

@@ -3348,6 +3348,9 @@ body.light-theme .phone-screen-iframe {
   pointer-events: none;
   mix-blend-mode: screen;
   animation: neon-flicker 5s infinite;
+  /* Hardware acceleration to prevent CPU layouts and lower GPU repaints */
+  will-change: opacity;
+  transform: translateZ(0);
 }
 
 /* Fan Rotating Overlays */
@@ -3358,41 +3361,43 @@ body.light-theme .phone-screen-iframe {
   mix-blend-mode: screen;
   /* Rotate fans */
   animation: fan-spin 6s linear infinite;
-  filter: drop-shadow(0 0 2px rgba(0, 229, 255, 0.8));
+  /* Hardware acceleration layer promotion */
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .gametesting-overlay-fan.fan-front-top {
-  left: 93.24%; /* (1339 - 56) / 1376 */
-  top: 23.05%;  /* (233 - 56) / 768 */
-  width: 8.14%;  /* 112 / 1376 */
-  height: 14.58%; /* 112 / 768 */
+  left: 92.08%; /* (1339 - 72) / 1376 */
+  top: 20.96%;  /* (233 - 72) / 768 */
+  width: 10.46%;  /* 144 / 1376 */
+  height: 18.75%; /* 144 / 768 */
   transform-origin: center center;
 }
 
 .gametesting-overlay-fan.fan-front-middle {
-  left: 92.3%;  /* (1326 - 56) / 1376 */
-  top: 38.54%;  /* (352 - 56) / 768 */
-  width: 8.14%;  /* 112 / 1376 */
-  height: 14.58%; /* 112 / 768 */
+  left: 91.13%; /* (1326 - 72) / 1376 */
+  top: 36.46%;  /* (352 - 72) / 768 */
+  width: 10.46%;  /* 144 / 1376 */
+  height: 18.75%; /* 144 / 768 */
   transform-origin: center center;
   animation-duration: 8s;
   animation-direction: reverse;
 }
 
 .gametesting-overlay-fan.fan-front-bottom {
-  left: 93.1%;  /* (1337 - 56) / 1376 */
-  top: 54.69%;  /* (476 - 56) / 768 */
-  width: 8.14%;  /* 112 / 1376 */
-  height: 14.58%; /* 112 / 768 */
+  left: 91.93%; /* (1337 - 72) / 1376 */
+  top: 52.6%;   /* (476 - 72) / 768 */
+  width: 10.46%;  /* 144 / 1376 */
+  height: 18.75%; /* 144 / 768 */
   transform-origin: center center;
   animation-duration: 7s;
 }
 
 .gametesting-overlay-fan.fan-rear {
-  left: 76.45%; /* (1100 - 48) / 1376 */
-  top: 29.3%;   /* (273 - 48) / 768 */
-  width: 6.98%;  /* 96 / 1376 */
-  height: 12.5%;  /* 96 / 768 */
+  left: 75.29%; /* (1100 - 64) / 1376 */
+  top: 27.21%;  /* (273 - 64) / 768 */
+  width: 9.3%;    /* 128 / 1376 */
+  height: 16.67%; /* 128 / 768 */
   transform-origin: center center;
   animation-duration: 5s;
   animation-direction: reverse;
@@ -3400,21 +3405,18 @@ body.light-theme .phone-screen-iframe {
 
 /* Animations */
 @keyframes fan-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from { transform: translateZ(0) rotate(0deg); }
+  to { transform: translateZ(0) rotate(360deg); }
 }
 
 @keyframes neon-flicker {
   0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
     opacity: 1;
-    filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.8)) drop-shadow(0 0 30px rgba(0, 229, 255, 0.4));
   }
   20%, 24%, 55% {
-    opacity: 0.3;
-    filter: none;
+    opacity: 0.35;
   }
   22% {
-    opacity: 0.7;
-    filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.4));
+    opacity: 0.75;
   }
 }
