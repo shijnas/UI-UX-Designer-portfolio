@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EZIO AI Command Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-darker: #06070a;
+      --bg-dark: #090a0f;
+      --bg-panel: #0d0f17;
+      --border: rgba(6, 182, 212, 0.15);
+      --border-active: rgba(6, 182, 212, 0.4);
+      --cyan: #06b6d4;
+      --cyan-glow: rgba(6, 182, 212, 0.2);
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-darker);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      height: 50px;
+      background: var(--bg-dark);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .logo {
+      font-weight: 800;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-shadow: 0 0 10px var(--cyan-glow);
+      font-size: 13px;
+    }
+
+    .status-badge {
+      font-size: 11px;
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      padding: 3px 8px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #22c55e;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+
+    /* Workspace Layout */
+    .workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 240px 1fr 300px;
+      overflow: hidden;
+    }
+
+    /* Left Sidebar */
+    .sidebar {
+      background: var(--bg-dark);
+      border-right: 1px solid var(--border);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      overflow-y: auto;
+    }
+
+    .sidebar-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+
+    .explorer-node {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 4px;
+      transition: all 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .explorer-node:hover {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+    }
+
+    .explorer-node.active {
+      color: var(--cyan);
+      background: rgba(6, 182, 212, 0.05);
+      border-left: 2px solid var(--cyan);
+    }
+
+    /* Memory Block */
+    .memory-block {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .memory-item {
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .memory-key {
+      color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Center Content */
+    .main-panel {
+      display: grid;
+      grid-template-rows: 1fr 140px;
+      overflow: hidden;
+      border-right: 1px solid var(--border);
+    }
+
+    /* Reasoning Logs */
+    .reasoning-area {
+      padding: 20px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .log-line {
+      display: flex;
+      gap: 10px;
+    }
+
+    .log-time {
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .log-tag {
+      color: var(--cyan);
+      flex-shrink: 0;
+    }
+
+    .log-text {
+      color: var(--text);
+    }
+
+    /* Bottom Input Console */
+    .input-console {
+      background: var(--bg-dark);
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-rows: 30px 1fr;
+      overflow: hidden;
+    }
+
+    .console-header {
+      background: var(--bg-darker);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 15px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .console-form {
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      gap: 10px;
+    }
+
+    .console-prompt {
+      color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    .console-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      width: 100%;
+    }
+
+    /* Right Sidebar */
+    .right-sidebar {
+      background: var(--bg-dark);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      overflow-y: auto;
+    }
+
+    .panel-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Task Engine */
+    .task-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .task-status {
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .status-running {
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--cyan);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+    }
+
+    .status-completed {
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--cyan);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Plugin List */
+    .plugin-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+    }
+
+    .plugin-name {
+      font-weight: 600;
+    }
+
+    .plugin-toggle {
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--cyan);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="logo">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/><ellipse cx="12" cy="12" rx="4" ry="6"/></svg>
+      EZIO AI COMMAND CENTER
+    </div>
+    <div class="status-badge">
+      <div class="status-dot"></div>
+      ACTIVE WORKSPACE
+    </div>
+  </header>
+
+  <!-- Workspace Grid -->
+  <div class="workspace">
+    
+    <!-- Left Panel -->
+    <div class="sidebar">
+      <div class="panel-section">
+        <div class="sidebar-title">Workspace Explorer</div>
+        <div class="explorer-node active">c:\Users\yshij\Desktop\EZIO</div>
+        <div class="explorer-node">├── apps</div>
+        <div class="explorer-node">│   ├── desktop</div>
+        <div class="explorer-node">│   └── frontend</div>
+        <div class="explorer-node">├── packages</div>
+        <div class="explorer-node">│   └── backend</div>
+        <div class="explorer-node">├── package.json</div>
+        <div class="explorer-node">└── wake_detect.py</div>
+      </div>
+
+      <div class="panel-section" style="margin-top: 10px;">
+        <div class="sidebar-title">Long-Term Memory</div>
+        <div class="memory-block">
+          <div class="memory-item">
+            <span class="memory-key">name:</span> Shijnas Yunus
+          </div>
+          <div class="memory-item">
+            <span class="memory-key">role:</span> UI/UX & Developer
+          </div>
+          <div class="memory-item">
+            <span class="memory-key">focus:</span> Python / Agentic AI
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Panel -->
+    <div class="main-panel">
+      <!-- Reasoning Log Area -->
+      <div class="reasoning-area" id="log-container">
+        <div class="log-line">
+          <span class="log-time">[10:45:02]</span>
+          <span class="log-tag">[SYSTEM]</span>
+          <span class="log-text">Ezio core engine initialized successfully.</span>
+        </div>
+        <div class="log-line">
+          <span class="log-time">[10:45:03]</span>
+          <span class="log-tag">[REASONING]</span>
+          <span class="log-text">Analyzing workspace dependencies... package-lock.json matches structure.</span>
+        </div>
+        <div class="log-line">
+          <span class="log-time">[10:45:05]</span>
+          <span class="log-tag">[AGENT]</span>
+          <span class="log-text">Wake word engine active. Listening for trigger word 'Ezio'...</span>
+        </div>
+      </div>
+
+      <!-- Bottom Form -->
+      <div class="input-console">
+        <div class="console-header">
+          <span>CONSOLE RECEIVER (port: 3001)</span>
+          <span>GEMINI 1.5 PRO</span>
+        </div>
+        <form class="console-form" id="console-form">
+          <span class="console-prompt">ezio@agent:~#</span>
+          <input type="text" class="console-input" id="console-input" placeholder="Ask Ezio to run a task or explain files..." autocomplete="off">
+        </form>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="right-sidebar">
+      <div class="panel-section">
+        <div class="sidebar-title">Task Engine</div>
+        <div class="task-card">
+          <div class="task-header">
+            <span>Wake Word Detector</span>
+            <span class="task-status status-running">RUNNING</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="task1-progress" style="width: 100%;"></div>
+          </div>
+        </div>
+        <div class="task-card">
+          <div class="task-header">
+            <span>Build Frontend Assets</span>
+            <span class="task-status" id="task2-status">COMPLETED</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="task2-progress" style="width: 100%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section" style="margin-top: 10px;">
+        <div class="sidebar-title">Active Plugins</div>
+        <div class="plugin-item">
+          <span class="plugin-name">Workspace Explorer</span>
+          <span class="plugin-toggle">ACTIVE</span>
+        </div>
+        <div class="plugin-item">
+          <span class="plugin-name">Git Repository Sync</span>
+          <span class="plugin-toggle">ACTIVE</span>
+        </div>
+        <div class="plugin-item">
+          <span class="plugin-name">Memory Storage Block</span>
+          <span class="plugin-toggle">ACTIVE</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Console Input and Simulated Logger
+    const consoleForm = document.getElementById('console-form');
+    const consoleInput = document.getElementById('console-input');
+    const logContainer = document.getElementById('log-container');
+    const task2Progress = document.getElementById('task2-progress');
+    const task2Status = document.getElementById('task2-status');
+
+    function getTimeString() {
+      const now = new Date();
+      return `[${now.toTimeString().split(' ')[0]}]`;
+    }
+
+    function addLog(tag, text, type = 'AGENT') {
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      line.innerHTML = `
+        <span class="log-time">${getTimeString()}</span>
+        <span class="log-tag">[${type}]</span>
+        <span class="log-text">${text}</span>
+      `;
+      logContainer.appendChild(line);
+      logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    consoleForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = consoleInput.value.trim();
+      if (!val) return;
+
+      // Log the query
+      addLog('USER', val, 'USER');
+      consoleInput.value = '';
+
+      // Simulate reasoning
+      setTimeout(() => {
+        addLog('REASONING', `Parsing intent from instruction: "${val}"`, 'REASONING');
+      }, 500);
+
+      setTimeout(() => {
+        if (val.toLowerCase().includes('build') || val.toLowerCase().includes('run')) {
+          addLog('SYSTEM', 'Starting build job: building apps/frontend webpack bundler...', 'SYSTEM');
+          task2Status.className = 'task-status status-running';
+          task2Status.innerText = 'RUNNING';
+          task2Progress.style.width = '0%';
+          
+          let p = 0;
+          const intv = setInterval(() => {
+            p += 20;
+            task2Progress.style.width = p + '%';
+            if (p >= 100) {
+              clearInterval(intv);
+              task2Status.className = 'task-status status-completed';
+              task2Status.innerText = 'COMPLETED';
+              addLog('AGENT', 'Build complete: all static Next.js assets packaged into out/ directory.', 'AGENT');
+            }
+          }, 400);
+        } else {
+          addLog('AGENT', `Processed instruction. Successfully sync'd database and ran active modules.`, 'AGENT');
+        }
+      }, 1200);
+    });
+
+    // Fluctuator for logs
+    setInterval(() => {
+      if (Math.random() > 0.7) {
+        const simLogs = [
+          "Wake word listener: ambient sound normalized.",
+          "Indexed 12 modules in node_modules directory.",
+          "Long-term memory snapshot saved locally.",
+          "Active plugin poll: Git sync is up to date."
+        ];
+        addLog('SYSTEM', simLogs[Math.floor(Math.random() * simLogs.length)], 'SYSTEM');
+      }
+    }, 8000);
+  </script>
+</body>
+</html>

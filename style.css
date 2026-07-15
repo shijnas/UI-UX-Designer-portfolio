@@ -3222,4 +3222,104 @@ body.light-theme .phone-screen-iframe {
   transition: opacity 0.3s ease;
 }
 
+/* Healthcare Dashboard Interactive Mockup Coordinates */
+.project-health-interactive {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3 !important;
+}
+
+.health-screen-container {
+  position: absolute;
+  left: 11.5%;
+  top: 18.3%;
+  width: 77%;
+  height: 64.5%;
+  z-index: 2;
+  overflow: hidden;
+  background: #0d1021 !important; /* Match Healthcare dashboard background */
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.health-screen-iframe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: #0d1021 !important;
+  pointer-events: auto;
+  transition: opacity 0.3s ease;
+}
+
+/* EZIO AI Command Center Interactive Mockup Coordinates */
+.project-ezio-interactive {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3 !important;
+}
+
+.ezio-screen-container {
+  position: absolute;
+  left: 20.3%;
+  top: 21.6%;
+  width: 61.1%;
+  height: 42.7%;
+  z-index: 2;
+  overflow: hidden;
+  background: #06070a !important; /* Match EZIO dashboard background */
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.ezio-screen-iframe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: #06070a !important;
+  pointer-events: auto;
+  transition: opacity 0.3s ease;
+}
+
+/* Game Testing Portfolio Interactive Mockup Coordinates */
+.project-gametesting-interactive {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3 !important;
+}
+
+.gametesting-screen-container {
+  position: absolute;
+  left: 18.5%;
+  top: 23.2%;
+  width: 66.2%;
+  height: 44.8%;
+  z-index: 2;
+  overflow: hidden;
+  background: #08090d !important; /* Match Game testing background */
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.gametesting-screen-iframe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: #08090d !important;
+  pointer-events: auto;
+  transition: opacity 0.3s ease;
+}
+
+
 

@@ -1001,6 +1001,75 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       }
+
+      // Scale Health Display screen iframe to fit desktop layout edge-to-edge
+      const healthContainer = document.querySelector('.health-screen-container');
+      if (healthContainer) {
+        const iframe = healthContainer.querySelector('.health-screen-iframe');
+        if (iframe) {
+          const containerW = healthContainer.clientWidth;
+          const containerH = healthContainer.clientHeight;
+          if (containerW > 0 && containerH > 0) {
+            const baseW = 1280;
+            const baseH = Math.round(baseW * (containerH / containerW)) || 745;
+            const scale = containerW / baseW;
+
+            iframe.style.width = baseW + 'px';
+            iframe.style.height = baseH + 'px';
+            iframe.style.transform = `scale(${scale.toFixed(4)})`;
+            iframe.style.transformOrigin = 'top left';
+            iframe.style.position = 'absolute';
+            iframe.style.left = '0';
+            iframe.style.top = '0';
+          }
+        }
+      }
+
+      // Scale EZIO Display screen iframe to fit desktop layout edge-to-edge
+      const ezioContainer = document.querySelector('.ezio-screen-container');
+      if (ezioContainer) {
+        const iframe = ezioContainer.querySelector('.ezio-screen-iframe');
+        if (iframe) {
+          const containerW = ezioContainer.clientWidth;
+          const containerH = ezioContainer.clientHeight;
+          if (containerW > 0 && containerH > 0) {
+            const baseW = 1280;
+            const baseH = Math.round(baseW * (containerH / containerW)) || 745;
+            const scale = containerW / baseW;
+
+            iframe.style.width = baseW + 'px';
+            iframe.style.height = baseH + 'px';
+            iframe.style.transform = `scale(${scale.toFixed(4)})`;
+            iframe.style.transformOrigin = 'top left';
+            iframe.style.position = 'absolute';
+            iframe.style.left = '0';
+            iframe.style.top = '0';
+          }
+        }
+      }
+
+      // Scale Game Testing Display screen iframe to fit desktop layout edge-to-edge
+      const gametestingContainer = document.querySelector('.gametesting-screen-container');
+      if (gametestingContainer) {
+        const iframe = gametestingContainer.querySelector('.gametesting-screen-iframe');
+        if (iframe) {
+          const containerW = gametestingContainer.clientWidth;
+          const containerH = gametestingContainer.clientHeight;
+          if (containerW > 0 && containerH > 0) {
+            const baseW = 1280;
+            const baseH = Math.round(baseW * (containerH / containerW)) || 745;
+            const scale = containerW / baseW;
+
+            iframe.style.width = baseW + 'px';
+            iframe.style.height = baseH + 'px';
+            iframe.style.transform = `scale(${scale.toFixed(4)})`;
+            iframe.style.transformOrigin = 'top left';
+            iframe.style.position = 'absolute';
+            iframe.style.left = '0';
+            iframe.style.top = '0';
+          }
+        }
+      }
     }
 
     // Run scaling on load, resize, and orientation change
