@@ -3148,3 +3148,110 @@ body.light-theme .phone-screen-iframe {
   }
 }
 
+/* ==========================================================================
+   MAC LIVE MOCKUP PREVIEW — Apple Studio Display
+   ========================================================================== */
+.project-mac-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 2rem;
+  background: radial-gradient(circle at center, #16112a 0%, #06040d 100%);
+  border-bottom: 1px solid var(--border-glass);
+  overflow: hidden;
+  width: 100%;
+}
+
+.mock-mac {
+  position: relative;
+  width: 85%;
+  max-width: 680px;
+  aspect-ratio: 16 / 10.8; /* Height accounts for screen + bezel + stand gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.mock-mac:hover {
+  transform: translateY(-6px);
+}
+
+.mac-screen-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background: #000000;
+  border: 11px solid #08070a; /* Matte screen bezel border */
+  border-radius: 14px;
+  box-shadow: 
+    0 0 0 1.2px #2f2d3a, 
+    0 20px 45px rgba(0, 0, 0, 0.65),
+    inset 0 0 0 0.8px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  z-index: 2;
+}
+
+.mac-screen-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #0d0b14;
+  pointer-events: auto;
+  transition: filter 0.5s ease, background-color 0.5s ease;
+}
+
+body.light-theme .mac-screen-container {
+  border-color: #e5e7eb; /* Silver/grey bezel for light theme */
+  box-shadow: 
+    0 0 0 1.2px #d1d5db, 
+    0 20px 45px rgba(0, 0, 0, 0.15);
+}
+
+body.light-theme .mac-screen-iframe {
+  background: #f6f5f8;
+  filter: invert(0.9) hue-rotate(180deg);
+}
+
+/* Metal base stand support */
+.mac-stand {
+  position: relative;
+  width: 115px;
+  height: 52px;
+  background: linear-gradient(180deg, #374151 0%, #111827 100%);
+  clip-path: polygon(22% 0%, 78% 0%, 100% 100%, 0% 100%);
+  margin-top: -2px; /* Smooth stitching overlap */
+  z-index: 1;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+body.light-theme .mac-stand {
+  background: linear-gradient(180deg, #e5e7eb 0%, #9ca3af 100%);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* Mobile responsive monitor overrides */
+@media (max-width: 768px) {
+  .project-mac-wrapper {
+    padding: 2rem 1rem;
+  }
+  .mock-mac {
+    width: 95%;
+  }
+  .mac-screen-container {
+    border-width: 7px;
+    border-radius: 10px;
+  }
+  .mac-stand {
+    width: 75px;
+    height: 38px;
+  }
+}
+
+
