@@ -952,7 +952,7 @@ document.addEventListener('DOMContentLoaded', () => {
         iframe.style.top = offsetTop.toFixed(1) + 'px';
       });
 
-      // Scale Mac Studio Display screen iframe
+      // Scale Mac Studio Display screen iframe to fit desktop layout with equal margins
       const macContainer = document.querySelector('.mac-screen-container');
       if (macContainer) {
         const iframe = macContainer.querySelector('.mac-screen-iframe');
@@ -960,18 +960,32 @@ document.addEventListener('DOMContentLoaded', () => {
           const containerW = macContainer.clientWidth;
           const containerH = macContainer.clientHeight;
           if (containerW > 0 && containerH > 0) {
-            // Render natively at widescreen desktop width (1280px)
-            const baseW = 1280;
-            const baseH = Math.round(baseW * (containerH / containerW)) || 745;
-            const scale = containerW / baseW;
+            // Equal padding of 24px from edges (scales down on small screens)
+            const pad = Math.min(24, containerW * 0.05);
+            const targetW = containerW - 2 * pad;
+            const targetH = containerH - 2 * pad;
 
+            // Render natively at widescreen desktop dimensions (1280x800)
+            const baseW = 1280;
+            const baseH = 800;
+
+            // Calculate scale factor using "contain" aspect ratio scaling
+            const scaleW = targetW / baseW;
+            const scaleH = targetH / baseH;
+            const scale = Math.min(scaleW, scaleH);
+
+            // Apply size and transform scale
             iframe.style.width = baseW + 'px';
             iframe.style.height = baseH + 'px';
             iframe.style.transform = `scale(${scale.toFixed(4)})`;
             iframe.style.transformOrigin = 'top left';
             iframe.style.position = 'absolute';
-            iframe.style.left = '0';
-            iframe.style.top = '0';
+
+            // Center the scaled iframe perfectly within the container
+            const offsetLeft = (containerW - baseW * scale) / 2;
+            const offsetTop = (containerH - baseH * scale) / 2;
+            iframe.style.left = offsetLeft.toFixed(1) + 'px';
+            iframe.style.top = offsetTop.toFixed(1) + 'px';
           }
         }
       }
