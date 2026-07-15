@@ -976,6 +976,31 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       }
+
+      // Scale Travel Display screen iframe to fit desktop layout edge-to-edge
+      const travelContainer = document.querySelector('.travel-screen-container');
+      if (travelContainer) {
+        const iframe = travelContainer.querySelector('.travel-screen-iframe');
+        if (iframe) {
+          const containerW = travelContainer.clientWidth;
+          const containerH = travelContainer.clientHeight;
+          if (containerW > 0 && containerH > 0) {
+            // Render natively at widescreen desktop width (1280px) and match container aspect ratio
+            const baseW = 1280;
+            const baseH = Math.round(baseW * (containerH / containerW)) || 745;
+            const scale = containerW / baseW;
+
+            // Apply size and transform scale
+            iframe.style.width = baseW + 'px';
+            iframe.style.height = baseH + 'px';
+            iframe.style.transform = `scale(${scale.toFixed(4)})`;
+            iframe.style.transformOrigin = 'top left';
+            iframe.style.position = 'absolute';
+            iframe.style.left = '0';
+            iframe.style.top = '0';
+          }
+        }
+      }
     }
 
     // Run scaling on load, resize, and orientation change

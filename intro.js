@@ -146,7 +146,7 @@
   function lazyLoadProjectIframes() {
     if (iframesLoaded) return;
     iframesLoaded = true;
-    const iframes = document.querySelectorAll('.phone-screen-iframe, .mac-screen-iframe');
+    const iframes = document.querySelectorAll('.phone-screen-iframe, .mac-screen-iframe, .travel-screen-iframe');
     iframes.forEach(iframe => {
       const realSrc = iframe.getAttribute('data-src');
       if (realSrc) {
