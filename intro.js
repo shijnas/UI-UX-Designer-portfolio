@@ -154,25 +154,97 @@
     
     const isDesktop = window.innerWidth > 1024;
     
-    // On mobile/tablet: remove all iframes from DOM and skip loading entirely.
-    // Background images remain visible. This completely prevents Safari/Chrome OOM crashes.
-    if (!isDesktop) {
-      const allIframes = document.querySelectorAll('.phone-screen-iframe, .mac-screen-iframe, .travel-screen-iframe, .health-screen-iframe, .ezio-screen-iframe, .gametesting-screen-iframe');
-      allIframes.forEach(iframe => iframe.remove());
+    // Find all screen containers
+    const containers = Array.from(document.querySelectorAll(
+      '.phone-screen-container, .mac-screen-container, .travel-screen-container, ' +
+      '.health-screen-container, .ezio-screen-container, .gametesting-screen-container'
+    ));
+    
+    // Build registry from HTML data-src attributes
+    const registry = containers.map(container => {
+      const iframe = container.querySelector('iframe');
+      if (!iframe) return null;
+      const config = {
+        container,
+        dataSrc: iframe.getAttribute('data-src'),
+        className: iframe.className,
+        card: container.closest('.project-card'),
+        activeIframe: null
+      };
+      iframe.remove(); // Remove from DOM immediately — load on demand
+      return config;
+    }).filter(Boolean);
+    
+    if (isDesktop) {
+      // Desktop: preload all iframes immediately for interactive hover
+      registry.forEach(config => {
+        const iframe = document.createElement('iframe');
+        iframe.className = config.className;
+        iframe.setAttribute('src', config.dataSrc);
+        iframe.setAttribute('loading', 'lazy');
+        config.container.appendChild(iframe);
+        config.activeIframe = iframe;
+        if (window.scaleIframes) window.scaleIframes();
+      });
       return;
     }
     
-    // Desktop only: preload all iframes for interactive hover experience
-    const iframes = document.querySelectorAll('.phone-screen-iframe, .mac-screen-iframe, .travel-screen-iframe, .health-screen-iframe, .ezio-screen-iframe, .gametesting-screen-iframe');
-    iframes.forEach(iframe => {
-      const realSrc = iframe.getAttribute('data-src');
-      if (realSrc) {
-        iframe.setAttribute('src', realSrc);
-        iframe.onload = () => {
-          if (window.scaleIframes) window.scaleIframes();
-        };
-      }
-    });
+    // Mobile/Tablet: Load ONE iframe at a time, ONLY when user has stopped scrolling
+    let isScrolling = false;
+    let scrollTimer = null;
+    let activeConfig = null;
+    
+    const unloadAll = () => {
+      registry.forEach(cfg => {
+        if (cfg.activeIframe) {
+          cfg.activeIframe.remove();
+          cfg.activeIframe = null;
+        }
+      });
+      activeConfig = null;
+    };
+    
+    const loadConfig = (config) => {
+      if (activeConfig === config) return;
+      unloadAll();
+      
+      const iframe = document.createElement('iframe');
+      iframe.className = config.className;
+      iframe.setAttribute('src', config.dataSrc);
+      iframe.setAttribute('loading', 'lazy');
+      config.container.appendChild(iframe);
+      config.activeIframe = iframe;
+      activeConfig = config;
+      if (window.scaleIframes) window.scaleIframes();
+    };
+    
+    // Find which config is most visible in the viewport
+    const getMostVisibleConfig = () => {
+      let best = null, bestArea = 0;
+      registry.forEach(config => {
+        const rect = config.container.getBoundingClientRect();
+        const visH = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
+        const visW = Math.min(rect.right, window.innerWidth) - Math.max(rect.left, 0);
+        if (visH > 0 && visW > 0) {
+          const area = visH * visW;
+          if (area > bestArea) { bestArea = area; best = config; }
+        }
+      });
+      return best;
+    };
+    
+    // On scroll: unload immediately and restart idle timer
+    window.addEventListener('scroll', () => {
+      isScrolling = true;
+      unloadAll(); // Instantly free memory during scroll
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        isScrolling = false;
+        // After 800ms idle, load the most visible iframe
+        const visible = getMostVisibleConfig();
+        if (visible) loadConfig(visible);
+      }, 800);
+    }, { passive: true });
   }
 
   let finishTriggered = false;

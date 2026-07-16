@@ -3436,15 +3436,3 @@ body.light-theme .phone-screen-iframe {
   opacity: 1 !important;
   pointer-events: auto !important;
 }
-
-/* Mobile: hide all interactive screen containers - show background images cleanly */
-@media (max-width: 1024px) {
-  .phone-screen-container,
-  .mac-screen-container,
-  .travel-screen-container,
-  .health-screen-container,
-  .ezio-screen-container,
-  .gametesting-screen-container {
-    display: none !important;
-  }
-}
