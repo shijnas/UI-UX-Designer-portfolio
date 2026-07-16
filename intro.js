@@ -182,14 +182,15 @@
 
     // ────────────────────────────────────────────────────────────
     // MOBILE: Smart Iframe Lifecycle Manager
-    //   • MAX 2 iframes alive in DOM at any time (current + next)
-    //   • Predictive preload 1.5vh ahead in scroll direction
-    //   • Instant reveal — fade-in on load, no white flash
-    //   • Hard-abort unmounted iframes (src=about:blank) to stop
-    //     all JS/network/timers in the embedded site immediately
-    //   • Single requestAnimationFrame tick — never blocks scroll
+    //   • MAX 1 iframe alive in DOM at any time
+    //   • Sequential transition: unmount old → 500ms GC pause → mount new
+    //   • src=about:blank on unmount stops ALL JS/network/timers instantly
+    //   • Single rAF tick per scroll event — never blocks compositor
+    //   • Fade-in on load — no white flash
     // ────────────────────────────────────────────────────────────
-    const MAX_ACTIVE = 2; // current + 1 preload only
+    const MAX_ACTIVE = 1;
+
+    let transitioning = false;
 
     function mountIframe(config) {
       if (config.activeIframe) return;
@@ -210,9 +211,7 @@
 
     function unmountIframe(config) {
       if (!config.activeIframe) return;
-      // Set src to about:blank FIRST — this stops all JS, timers,
-      // and network requests inside the embedded site immediately,
-      // preventing a memory spike during removal.
+      // Hard-abort: stops all JS/timers/network in the embedded site immediately
       config.activeIframe.src = 'about:blank';
       config.activeIframe.remove();
       config.activeIframe = null;
@@ -221,62 +220,70 @@
     let lastScrollY = window.scrollY;
     let scrollDir = 'down';
     let tickQueued = false;
+    let pendingMount = null;
+    let gcTimer = null;
 
     function evaluate() {
       tickQueued = false;
       const currentScrollY = window.scrollY;
 
-      // Track direction
       if (currentScrollY > lastScrollY) scrollDir = 'down';
       else if (currentScrollY < lastScrollY) scrollDir = 'up';
       lastScrollY = currentScrollY;
 
       const vh = window.innerHeight;
 
-      // Score each entry: lower = closer to user in scroll direction
-      const scored = registry.map(config => {
+      // Find the single most-relevant screen to show
+      // Priority: visible > nearest ahead in scroll direction
+      let bestVisible = null;
+      let bestAhead = null;
+      let bestAheadDist = Infinity;
+
+      registry.forEach(config => {
         const rect = config.container.getBoundingClientRect();
-        const midpoint = rect.top + rect.height / 2;
         const inViewport = rect.top < vh && rect.bottom > 0;
 
-        let score;
         if (inViewport) {
-          // Currently visible — highest priority (negative = comes first)
-          score = -10000 + Math.abs(midpoint - vh / 2);
-        } else if (scrollDir === 'down') {
-          // Below viewport — preload sooner if closer
-          const dist = rect.top - vh;
-          score = dist >= 0 ? dist : 999999; // ignore fully above
+          // Among visible, pick the one closest to screen center
+          const distToCenter = Math.abs((rect.top + rect.height / 2) - vh / 2);
+          if (!bestVisible || distToCenter < bestVisible.dist) {
+            bestVisible = { config, dist: distToCenter };
+          }
         } else {
-          // Above viewport — preload sooner if closer
-          const dist = -rect.bottom;
-          score = dist >= 0 ? dist : 999999; // ignore fully below
+          // Among off-screen, pick nearest one in scroll direction
+          const dist = scrollDir === 'down' ? rect.top - vh : -rect.bottom;
+          if (dist >= 0 && dist < bestAheadDist) {
+            bestAheadDist = dist;
+            bestAhead = config;
+          }
         }
-        return { config, score, inViewport };
       });
 
-      // Sort: visible first, then by closeness in scroll direction
-      scored.sort((a, b) => a.score - b.score);
-
-      // Only want the top MAX_ACTIVE entries that are within preload range
-      const PRELOAD_RANGE = 1.5 * vh;
+      // Wanted = best visible only (MAX_ACTIVE = 1, no preload to prevent crash)
       const wanted = new Set();
-      for (const { config, score, inViewport } of scored) {
-        if (wanted.size >= MAX_ACTIVE) break;
-        // Include if visible OR within preload buffer ahead
-        if (inViewport || (score >= 0 && score <= PRELOAD_RANGE)) {
-          wanted.add(config);
-        }
-      }
+      if (bestVisible) wanted.add(bestVisible.config);
 
-      // Apply — unmount anything not wanted, mount what is
-      registry.forEach(config => {
-        if (wanted.has(config)) {
-          mountIframe(config);
-        } else {
-          unmountIframe(config);
-        }
-      });
+      // Apply changes
+      const toUnmount = registry.filter(c => !wanted.has(c) && c.activeIframe);
+      const toMount   = registry.filter(c =>  wanted.has(c) && !c.activeIframe);
+
+      if (toMount.length === 0 && toUnmount.length === 0) return;
+
+      if (toUnmount.length > 0 && toMount.length > 0 && !transitioning) {
+        // Sequential transition: free old memory before allocating new
+        transitioning = true;
+        clearTimeout(gcTimer);
+        toUnmount.forEach(unmountIframe);
+
+        gcTimer = setTimeout(() => {
+          toMount.forEach(mountIframe);
+          transitioning = false;
+        }, 500); // 500ms lets Safari's GC reclaim the old iframe's RAM
+      } else if (toUnmount.length > 0 && !transitioning) {
+        toUnmount.forEach(unmountIframe);
+      } else if (toMount.length > 0 && !transitioning) {
+        toMount.forEach(mountIframe);
+      }
     }
 
     function scheduleTick() {
@@ -285,18 +292,14 @@
       requestAnimationFrame(evaluate);
     }
 
-    // Passive scroll listener — one rAF tick per scroll event
     window.addEventListener('scroll', scheduleTick, { passive: true });
 
-    // IntersectionObserver — fires when any container enters/leaves
-    // the viewport even without a scroll event (e.g. on resize)
     const visibilityObserver = new IntersectionObserver(
       () => scheduleTick(),
-      { rootMargin: '150% 0px 150% 0px', threshold: 0 }
+      { rootMargin: '50% 0px 50% 0px', threshold: 0 }
     );
     registry.forEach(config => visibilityObserver.observe(config.container));
 
-    // Initial evaluation
     evaluate();
   }
 

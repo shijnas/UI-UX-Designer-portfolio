@@ -3443,19 +3443,18 @@ body.light-theme .phone-screen-iframe {
    ============================================================ */
 @media (max-width: 1024px) {
 
-  /* CSS Containment: allow browser to skip offscreen layout & paint calculations */
+  /* Safe containment: limit layout/paint recalc to card boundaries
+     NOTE: NO content-visibility:auto here — it breaks getBoundingClientRect()
+     for offscreen cards, which would make the iframe lifecycle manager blind. */
   .project-card {
-    contain: layout style paint;
-    content-visibility: auto;
-    contain-intrinsic-size: 0 600px;
+    contain: layout style;
   }
 
   .service-card {
     contain: layout style;
-    content-visibility: auto;
-    contain-intrinsic-size: 0 200px;
   }
 
+  /* content-visibility safe on sections that have NO iframes / lifecycle logic */
   .skills-section,
   .about-section,
   .contact-section,
@@ -3469,19 +3468,19 @@ body.light-theme .phone-screen-iframe {
     decoding: async;
   }
 
-  /* Promote only actively animated elements — release GPU layers on static elements */
+  /* Release GPU layers from static images — only active animations need will-change */
   .project-img {
     will-change: auto;
   }
 
-  /* Prevent layout thrashing from iframes resizing during scroll */
+  /* Screen containers: layout+style only — NO size containment (breaks iframe scaling) */
   .phone-screen-container,
   .mac-screen-container,
   .travel-screen-container,
   .health-screen-container,
   .ezio-screen-container,
   .gametesting-screen-container {
-    contain: strict;
+    contain: layout style;
   }
 
   /* Prevent iOS elastic scroll on fixed overlays */
