@@ -152,6 +152,8 @@
     if (iframesInitialized) return;
     iframesInitialized = true;
     
+    const isDesktop = window.innerWidth > 1024;
+    
     // Find all screen containers
     const containers = document.querySelectorAll('.phone-screen-container, .mac-screen-container, .travel-screen-container, .health-screen-container, .ezio-screen-container, .gametesting-screen-container');
     
@@ -165,6 +167,7 @@
         container: container,
         dataSrc: templateIframe.getAttribute('data-src'),
         className: templateIframe.className,
+        card: container.closest('.project-card'),
         activeIframe: null
       };
       
@@ -174,42 +177,67 @@
       templateIframe.remove();
     });
     
-    // Viewport Observer at the container level with a tight 200px buffer to prevent concurrent iframe loading
-    const preloaderObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const container = entry.target;
-        const config = registry.find(item => item.container === container);
-        if (!config) return;
+    if (isDesktop) {
+      // Desktop: Bulk preload all iframes for instant hover responsiveness
+      registry.forEach(config => {
+        if (config.activeIframe) return;
         
-        if (entry.isIntersecting) {
-          // Screen container is close to viewport (within 200px): Mount and preload its iframe!
-          if (!config.activeIframe) {
-            config.activeIframe = document.createElement('iframe');
-            config.activeIframe.className = config.className;
-            config.activeIframe.setAttribute('src', config.dataSrc);
-            config.activeIframe.setAttribute('loading', 'lazy');
-            
-            config.container.appendChild(config.activeIframe);
-            
-            // Re-scale the newly mounted iframe to fit its container
-            if (window.scaleIframes) window.scaleIframes();
-          }
-        } else {
-          // Screen container scrolled away: Unmount iframe to reclaim memory immediately
-          if (config.activeIframe) {
-            config.activeIframe.remove();
-            config.activeIframe = null;
-          }
+        config.activeIframe = document.createElement('iframe');
+        config.activeIframe.className = config.className;
+        config.activeIframe.setAttribute('src', config.dataSrc);
+        config.activeIframe.setAttribute('loading', 'lazy');
+        
+        config.container.appendChild(config.activeIframe);
+        
+        // Scale it
+        if (window.scaleIframes) window.scaleIframes();
+      });
+    } else {
+      // Mobile/Tablet: Click-to-Interact System (completely prevents iframe loading during scroll)
+      registry.forEach(config => {
+        const loadIframe = () => {
+          if (config.activeIframe) return;
+          
+          // Unload all other active iframes first to conserve memory
+          registry.forEach(other => {
+            if (other.activeIframe) {
+              other.activeIframe.remove();
+              other.activeIframe = null;
+            }
+          });
+          
+          config.activeIframe = document.createElement('iframe');
+          config.activeIframe.className = config.className;
+          config.activeIframe.setAttribute('src', config.dataSrc);
+          config.activeIframe.setAttribute('loading', 'lazy');
+          
+          config.container.appendChild(config.activeIframe);
+          
+          // Scale it
+          if (window.scaleIframes) window.scaleIframes();
+        };
+        
+        // Listen to click (ignored during scroll swipes)
+        config.card.addEventListener('click', (e) => {
+          if (config.activeIframe) return;
+          
+          loadIframe();
+          e.stopPropagation(); // Prevent immediate document tap-out
+        });
+      });
+      
+      // Tap outside to unload and free memory
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.project-card')) {
+          registry.forEach(config => {
+            if (config.activeIframe) {
+              config.activeIframe.remove();
+              config.activeIframe = null;
+            }
+          });
         }
       });
-    }, {
-      rootMargin: '200px 0px 200px 0px' // Load 200px before entering screen, unload 200px after leaving
-    });
-    
-    // Observe each container individually
-    containers.forEach(container => {
-      preloaderObserver.observe(container);
-    });
+    }
   }
 
   let finishTriggered = false;
