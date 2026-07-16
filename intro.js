@@ -160,7 +160,6 @@
         container: container,
         dataSrc: templateIframe.getAttribute('data-src'),
         className: templateIframe.className,
-        card: container.closest('.project-card'),
         activeIframe: null
       };
       
@@ -170,18 +169,16 @@
       templateIframe.remove();
     });
     
-    // Viewport Observer with a 600px advance margin to preload elements before they enter the screen
+    // Viewport Observer at the container level with a tight 200px buffer to prevent concurrent iframe loading
     const preloaderObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        const card = entry.target;
-        // Find all registry items belonging to this card
-        const cardConfigs = registry.filter(item => item.card === card);
+        const container = entry.target;
+        const config = registry.find(item => item.container === container);
+        if (!config) return;
         
         if (entry.isIntersecting) {
-          // Card is close to viewport (within 600px): Mount and preload its iframes!
-          cardConfigs.forEach(config => {
-            if (config.activeIframe) return; // Already mounted
-            
+          // Screen container is close to viewport (within 200px): Mount and preload its iframe!
+          if (!config.activeIframe) {
             config.activeIframe = document.createElement('iframe');
             config.activeIframe.className = config.className;
             config.activeIframe.setAttribute('src', config.dataSrc);
@@ -191,25 +188,22 @@
             
             // Re-scale the newly mounted iframe to fit its container
             if (window.scaleIframes) window.scaleIframes();
-          });
+          }
         } else {
-          // Card scrolled far away: Unmount iframe to reclaim memory immediately
-          cardConfigs.forEach(config => {
-            if (config.activeIframe) {
-              config.activeIframe.remove();
-              config.activeIframe = null;
-            }
-          });
+          // Screen container scrolled away: Unmount iframe to reclaim memory immediately
+          if (config.activeIframe) {
+            config.activeIframe.remove();
+            config.activeIframe = null;
+          }
         }
       });
     }, {
-      rootMargin: '600px 0px 600px 0px' // Load 600px before viewport, unload 600px after viewport
+      rootMargin: '200px 0px 200px 0px' // Load 200px before entering screen, unload 200px after leaving
     });
     
-    // Observe each project card
-    const cards = document.querySelectorAll('.project-card');
-    cards.forEach(card => {
-      preloaderObserver.observe(card);
+    // Observe each container individually
+    containers.forEach(container => {
+      preloaderObserver.observe(container);
     });
   }
 
