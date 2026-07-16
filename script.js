@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Prevent recursive iframe loading (iframe inception)
+  if (window.self !== window.top) {
+    return;
+  }
   // ==========================================================================
   // 1. Theme Toggle (Dark / Light Mode)
   // ==========================================================================

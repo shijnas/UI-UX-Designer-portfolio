@@ -3422,3 +3422,17 @@ body.light-theme .phone-screen-iframe {
     opacity: 0.75;
   }
 }
+
+/* Iframe Inception Prevention overrides: hide intro and show main portfolio directly inside nested iframes */
+.in-iframe #cinematic-intro,
+.in-iframe #intro-skip-btn,
+.in-iframe #cin-phone,
+.in-iframe .cin-phone-container {
+  display: none !important;
+}
+
+.in-iframe #main-wrapper {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}

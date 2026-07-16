@@ -9,6 +9,11 @@
 (function () {
   'use strict';
 
+  // Prevent recursive iframe loading (iframe inception)
+  if (window.self !== window.top) {
+    return;
+  }
+
   const CFG = {
     lerpSpeed:         0.048,         // Decreased for silkier, smoother inertia glide
     scrollSensitivity: 0.00028,
