@@ -1072,8 +1072,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Run scaling on load, resize, and orientation change
-    window.addEventListener('resize', scaleIframes);
+    // Run scaling on load, resize, and orientation change (debounced to save CPU/GPU cycles)
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(scaleIframes, 150);
+    });
     window.addEventListener('load', scaleIframes);
     window.scaleIframes = scaleIframes; // Expose globally to trigger on lazy load
     scaleIframes();

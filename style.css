@@ -3420,3 +3420,22 @@ body.light-theme .phone-screen-iframe {
     opacity: 0.75;
   }
 }
+
+/* Hide CPU/GPU-heavy interactive mockup elements on Mobile/Tablet screens to ensure solid 60fps and prevent browser OOM crashes */
+@media (max-width: 1024px) {
+  .project-phones-wrapper,
+  .mac-screen-container,
+  .travel-screen-container,
+  .health-screen-container,
+  .ezio-screen-container,
+  .gametesting-screen-container,
+  .gametesting-overlay-neon,
+  .gametesting-overlay-fan {
+    display: none !important;
+  }
+  
+  /* Ensure the static card cover images scale to fill the space beautifully on mobile */
+  .project-image-wrapper {
+    aspect-ratio: 16 / 9 !important;
+  }
+}
