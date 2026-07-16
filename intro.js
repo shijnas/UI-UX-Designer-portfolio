@@ -138,7 +138,7 @@
         lazyLoadProjectIframes();
       }
 
-      if (p >= 0.992 && !introDone) finishIntro();
+      if (p >= 0.992 && !introDone) triggerFinishIntro();
     }
   }
 
@@ -233,6 +233,30 @@
     }
   }
 
+  let finishTriggered = false;
+  function triggerFinishIntro() {
+    if (finishTriggered) return;
+    finishTriggered = true;
+    
+    // Freeze progress coordinates at final state
+    progress = 1.0;
+    targetProg = 1.0;
+    
+    // Scroll to the very top (Hero section) immediately to prevent landing on any other page
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    
+    // Delay homepage entry by 1 second
+    setTimeout(() => {
+      // Enforce top position one more time before unlocking
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      finishIntro();
+    }, 1000);
+  }
+
   function onResize() {
     phoneTarget = null;
   }
@@ -241,6 +265,11 @@
     if (introDone) return;
     lazyLoadProjectIframes(); // Fallback to load if skipped
     introDone = true;
+
+    // Force top alignment
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
 
     const phone = $('cin-phone');
     if (phone) {
@@ -302,16 +331,19 @@
   }
 
   function onWheel(e) {
-    if (introDone) return;
+    if (introDone || finishTriggered) return;
     e.preventDefault();
     targetProg = clamp(targetProg + e.deltaY * CFG.scrollSensitivity, 0, 1);
     scheduleLoop();
   }
 
-  function onTouchStart(e) { if (!introDone) touchY = e.touches[0].clientY; }
+  function onTouchStart(e) { 
+    if (introDone || finishTriggered) return;
+    touchY = e.touches[0].clientY; 
+  }
 
   function onTouchMove(e) {
-    if (introDone) return;
+    if (introDone || finishTriggered) return;
     e.preventDefault();
     const dy   = touchY - e.touches[0].clientY;
     touchY     = e.touches[0].clientY;
@@ -320,7 +352,7 @@
   }
 
   function onKeyDown(e) {
-    if (introDone) return;
+    if (introDone || finishTriggered) return;
     if (['ArrowDown', 'PageDown', ' '].includes(e.key)) {
       e.preventDefault(); targetProg = clamp(targetProg + 0.07, 0, 1);
     }
@@ -333,7 +365,8 @@
   function skipIntro() {
     progress = 0.96; targetProg = 1.0;
     scheduleLoop();
-    setTimeout(finishIntro, 500);
+    // Execute the top scroll and delay transition
+    setTimeout(triggerFinishIntro, 400);
   }
 
   function init() {
