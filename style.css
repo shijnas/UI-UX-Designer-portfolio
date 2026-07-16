@@ -3268,19 +3268,19 @@ body.light-theme .phone-screen-iframe {
 .project-ezio-interactive {
   position: relative;
   overflow: hidden;
-  /* Slot machine image is 1024x819 aspect ratio */
-  aspect-ratio: 1024 / 819 !important;
+  /* Match the Game Testing image wrapper aspect ratio exactly (1376x768) */
+  aspect-ratio: 1376 / 768 !important;
 }
 
 .ezio-screen-container {
   position: absolute;
-  /* Pixel-precise coordinates from original GODD CASINO slot machine image (1024×819):
-     Screen: left=162px (15.82%), top=205px (25.03%),
-     right=862px → width=700px (68.36%), bottom=626px → height=421px (51.4%) */
+  /* Pixel-precise coordinates from original GODD CASINO slot machine image (1024×819)
+     recalculated for the cropped 1376×768 aspect ratio container:
+     Screen: left=15.82%, top=14.22%, width=68.36%, height=73.66% */
   left: 15.82%;
-  top: 25.03%;
+  top: 14.22%;
   width: 68.36%;
-  height: 51.4%;
+  height: 73.66%;
   z-index: 2;
   overflow: hidden;
   background: #000 !important;
