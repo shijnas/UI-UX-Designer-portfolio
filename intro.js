@@ -162,49 +162,74 @@
         }
       });
     } else {
-      // Mobile/Tablet: Dynamic load/unload to prevent Out-Of-Memory (OOM) browser tab crashes
-      const cards = document.querySelectorAll('.project-card');
-      cards.forEach(card => {
-        const iframe = card.querySelector('.phone-screen-iframe, .mac-screen-iframe, .travel-screen-iframe, .health-screen-iframe, .ezio-screen-iframe, .gametesting-screen-iframe');
-        if (!iframe) return;
+      // Mobile/Tablet: Iframe Recycling System to prevent OOM crashes while preserving layout
+      const containers = document.querySelectorAll('.phone-screen-container, .mac-screen-container, .travel-screen-container, .health-screen-container, .ezio-screen-container, .gametesting-screen-container');
+      
+      containers.forEach(container => {
+        const templateIframe = container.querySelector('iframe');
+        if (!templateIframe) return;
         
-        const realSrc = iframe.getAttribute('data-src');
-        if (!realSrc) return;
+        // Save iframe details
+        const dataSrc = templateIframe.getAttribute('data-src');
+        const className = templateIframe.className;
         
+        // Remove template iframe from DOM to save memory immediately
+        templateIframe.remove();
+        
+        // Find the parent project card
+        const card = container.closest('.project-card');
+        if (!card) return;
+        
+        let activeIframe = null;
         let loadTimeout = null;
         
-        card.addEventListener('mouseenter', () => {
-          loadTimeout = setTimeout(() => {
-            if (iframe.getAttribute('src') === 'about:blank' || !iframe.getAttribute('src')) {
-              iframe.setAttribute('src', realSrc);
-              iframe.onload = () => {
-                if (window.scaleIframes) window.scaleIframes();
-              };
-            }
-          }, 200);
-        });
-        
-        card.addEventListener('mouseleave', () => {
-          if (loadTimeout) clearTimeout(loadTimeout);
-          iframe.setAttribute('src', 'about:blank');
-        });
-        
-        // Touch support: load on tap, unload all others to keep memory footprint minimal
-        card.addEventListener('touchstart', () => {
-          document.querySelectorAll('.phone-screen-iframe, .mac-screen-iframe, .travel-screen-iframe, .health-screen-iframe, .ezio-screen-iframe, .gametesting-screen-iframe').forEach(otherIframe => {
-            if (otherIframe !== iframe) {
-              otherIframe.setAttribute('src', 'about:blank');
-            }
-          });
+        const loadIframe = () => {
+          if (activeIframe) return;
           
-          if (iframe.getAttribute('src') === 'about:blank' || !iframe.getAttribute('src')) {
-            iframe.setAttribute('src', realSrc);
-            iframe.onload = () => {
-              if (window.scaleIframes) window.scaleIframes();
-            };
+          // Unload all other recycled active iframes on the page first (keeps memory limit to strictly 1 active iframe)
+          document.querySelectorAll('.phone-screen-container iframe, .mac-screen-container iframe, .travel-screen-container iframe, .health-screen-container iframe, .ezio-screen-container iframe, .gametesting-screen-container iframe').forEach(el => el.remove());
+          
+          // Create new iframe
+          activeIframe = document.createElement('iframe');
+          activeIframe.className = className;
+          activeIframe.setAttribute('src', dataSrc);
+          activeIframe.setAttribute('loading', 'lazy');
+          
+          container.appendChild(activeIframe);
+          
+          // Scale it
+          if (window.scaleIframes) window.scaleIframes();
+        };
+        
+        const unloadIframe = () => {
+          if (loadTimeout) clearTimeout(loadTimeout);
+          if (activeIframe) {
+            activeIframe.remove();
+            activeIframe = null;
           }
+        };
+        
+        // Setup card touch / tap listeners (touchstart triggers loading)
+        card.addEventListener('touchstart', (e) => {
+          // If already loaded, do nothing
+          if (activeIframe) return;
+          
+          loadIframe();
         }, { passive: true });
+        
+        // Also support pointer hover transitions on tablet
+        card.addEventListener('mouseenter', () => {
+          loadTimeout = setTimeout(loadIframe, 200);
+        });
+        card.addEventListener('mouseleave', unloadIframe);
       });
+      
+      // Tap outside a project card should unload all iframes to completely free up memory
+      document.addEventListener('touchstart', (e) => {
+        if (!e.target.closest('.project-card')) {
+          document.querySelectorAll('.phone-screen-container iframe, .mac-screen-container iframe, .travel-screen-container iframe, .health-screen-container iframe, .ezio-screen-container iframe, .gametesting-screen-container iframe').forEach(el => el.remove());
+        }
+      }, { passive: true });
     }
   }
 
