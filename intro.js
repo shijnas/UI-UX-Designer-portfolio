@@ -154,90 +154,25 @@
     
     const isDesktop = window.innerWidth > 1024;
     
-    // Find all screen containers
-    const containers = document.querySelectorAll('.phone-screen-container, .mac-screen-container, .travel-screen-container, .health-screen-container, .ezio-screen-container, .gametesting-screen-container');
+    // On mobile/tablet: remove all iframes from DOM and skip loading entirely.
+    // Background images remain visible. This completely prevents Safari/Chrome OOM crashes.
+    if (!isDesktop) {
+      const allIframes = document.querySelectorAll('.phone-screen-iframe, .mac-screen-iframe, .travel-screen-iframe, .health-screen-iframe, .ezio-screen-iframe, .gametesting-screen-iframe');
+      allIframes.forEach(iframe => iframe.remove());
+      return;
+    }
     
-    // Cache iframe templates and details
-    const registry = [];
-    containers.forEach(container => {
-      const templateIframe = container.querySelector('iframe');
-      if (!templateIframe) return;
-      
-      const config = {
-        container: container,
-        dataSrc: templateIframe.getAttribute('data-src'),
-        className: templateIframe.className,
-        card: container.closest('.project-card'),
-        activeIframe: null
-      };
-      
-      registry.push(config);
-      
-      // Remove template iframe immediately on load to free memory
-      templateIframe.remove();
-    });
-    
-    if (isDesktop) {
-      // Desktop: Bulk preload all iframes for instant hover responsiveness
-      registry.forEach(config => {
-        if (config.activeIframe) return;
-        
-        config.activeIframe = document.createElement('iframe');
-        config.activeIframe.className = config.className;
-        config.activeIframe.setAttribute('src', config.dataSrc);
-        config.activeIframe.setAttribute('loading', 'lazy');
-        
-        config.container.appendChild(config.activeIframe);
-        
-        // Scale it
-        if (window.scaleIframes) window.scaleIframes();
-      });
-    } else {
-      // Mobile/Tablet: Click-to-Interact System (completely prevents iframe loading during scroll)
-      registry.forEach(config => {
-        const loadIframe = () => {
-          if (config.activeIframe) return;
-          
-          // Unload all other active iframes first to conserve memory
-          registry.forEach(other => {
-            if (other.activeIframe) {
-              other.activeIframe.remove();
-              other.activeIframe = null;
-            }
-          });
-          
-          config.activeIframe = document.createElement('iframe');
-          config.activeIframe.className = config.className;
-          config.activeIframe.setAttribute('src', config.dataSrc);
-          config.activeIframe.setAttribute('loading', 'lazy');
-          
-          config.container.appendChild(config.activeIframe);
-          
-          // Scale it
+    // Desktop only: preload all iframes for interactive hover experience
+    const iframes = document.querySelectorAll('.phone-screen-iframe, .mac-screen-iframe, .travel-screen-iframe, .health-screen-iframe, .ezio-screen-iframe, .gametesting-screen-iframe');
+    iframes.forEach(iframe => {
+      const realSrc = iframe.getAttribute('data-src');
+      if (realSrc) {
+        iframe.setAttribute('src', realSrc);
+        iframe.onload = () => {
           if (window.scaleIframes) window.scaleIframes();
         };
-        
-        // Listen to click (ignored during scroll swipes)
-        config.card.addEventListener('click', (e) => {
-          if (config.activeIframe) return;
-          
-          loadIframe();
-          e.stopPropagation(); // Prevent immediate document tap-out
-        });
-      });
-      
-      // Tap outside to unload and free memory
-      document.addEventListener('click', (e) => {
-        if (!e.target.closest('.project-card')) {
-          registry.forEach(config => {
-            if (config.activeIframe) {
-              config.activeIframe.remove();
-              config.activeIframe = null;
-            }
-          });
-        }
-      });
-    }
+      }
+    });
   }
 
   let finishTriggered = false;
