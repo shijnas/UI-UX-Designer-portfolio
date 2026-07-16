@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }, {
-    threshold: 0.15,
+    threshold: 0.02, // Lower threshold so tall stacked grids on mobile trigger reveal instantly (2% of element height)
     rootMargin: '0px 0px -50px 0px'
   });
 
