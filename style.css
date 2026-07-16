@@ -3436,3 +3436,70 @@ body.light-theme .phone-screen-iframe {
   opacity: 1 !important;
   pointer-events: auto !important;
 }
+
+/* ============================================================
+   MOBILE PERFORMANCE OPTIMIZATIONS (max-width: 1024px only)
+   Desktop is completely unchanged.
+   ============================================================ */
+@media (max-width: 1024px) {
+
+  /* CSS Containment: allow browser to skip offscreen layout & paint calculations */
+  .project-card {
+    contain: layout style paint;
+    content-visibility: auto;
+    contain-intrinsic-size: 0 600px;
+  }
+
+  .service-card {
+    contain: layout style;
+    content-visibility: auto;
+    contain-intrinsic-size: 0 200px;
+  }
+
+  .skills-section,
+  .about-section,
+  .contact-section,
+  .testimonials-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 500px;
+  }
+
+  /* Async image decoding — offloads from main thread */
+  img {
+    decoding: async;
+  }
+
+  /* Promote only actively animated elements — release GPU layers on static elements */
+  .project-img {
+    will-change: auto;
+  }
+
+  /* Prevent layout thrashing from iframes resizing during scroll */
+  .phone-screen-container,
+  .mac-screen-container,
+  .travel-screen-container,
+  .health-screen-container,
+  .ezio-screen-container,
+  .gametesting-screen-container {
+    contain: strict;
+  }
+
+  /* Prevent iOS elastic scroll on fixed overlays */
+  #cinematic-intro {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
+  }
+
+  /* Reduce paint area for overlapping glass elements */
+  .nav-container,
+  .hire-btn,
+  .theme-toggle {
+    isolation: isolate;
+  }
+
+  /* picture element: ensure it doesn't break existing flex/grid layouts */
+  picture {
+    display: contents;
+  }
+}
+

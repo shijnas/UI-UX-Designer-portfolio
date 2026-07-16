@@ -13,11 +13,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedTheme = localStorage.getItem('theme');
   const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
 
+  const isMobile = window.innerWidth <= 1024;
+
   const updateWallpapers = (isLight) => {
     const cinPhoneLock = document.getElementById('cin-phone-lock');
     const lockscreenWallpaper = document.getElementById('lockscreenWallpaper');
-    const lightPic = 'assets/wallpaper-light.jpg';
-    const darkPic = 'assets/wallpaper.jpg';
+
+    const lightPic = isMobile ? 'assets/mobile/wallpaper-light-m.webp' : 'assets/wallpaper-light.jpg';
+    const darkPic  = isMobile ? 'assets/mobile/wallpaper-m.webp'       : 'assets/wallpaper.jpg';
     const currentPic = isLight ? lightPic : darkPic;
 
     if (cinPhoneLock) {
