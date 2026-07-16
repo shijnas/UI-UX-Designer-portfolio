@@ -147,90 +147,70 @@
     if (iframesInitialized) return;
     iframesInitialized = true;
     
-    const isDesktop = window.innerWidth > 1024;
+    // Find all screen containers
+    const containers = document.querySelectorAll('.phone-screen-container, .mac-screen-container, .travel-screen-container, .health-screen-container, .ezio-screen-container, .gametesting-screen-container');
     
-    if (isDesktop) {
-      // Desktop: Bulk preload all iframes for instant hover responsiveness
-      const iframes = document.querySelectorAll('.phone-screen-iframe, .mac-screen-iframe, .travel-screen-iframe, .health-screen-iframe, .ezio-screen-iframe, .gametesting-screen-iframe');
-      iframes.forEach(iframe => {
-        const realSrc = iframe.getAttribute('data-src');
-        if (realSrc) {
-          iframe.setAttribute('src', realSrc);
-          iframe.onload = () => {
+    // Cache iframe templates and details
+    const registry = [];
+    containers.forEach(container => {
+      const templateIframe = container.querySelector('iframe');
+      if (!templateIframe) return;
+      
+      const config = {
+        container: container,
+        dataSrc: templateIframe.getAttribute('data-src'),
+        className: templateIframe.className,
+        card: container.closest('.project-card'),
+        activeIframe: null
+      };
+      
+      registry.push(config);
+      
+      // Remove template iframe immediately on load to free memory
+      templateIframe.remove();
+    });
+    
+    // Viewport Observer with a 600px advance margin to preload elements before they enter the screen
+    const preloaderObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const card = entry.target;
+        // Find all registry items belonging to this card
+        const cardConfigs = registry.filter(item => item.card === card);
+        
+        if (entry.isIntersecting) {
+          // Card is close to viewport (within 600px): Mount and preload its iframes!
+          cardConfigs.forEach(config => {
+            if (config.activeIframe) return; // Already mounted
+            
+            config.activeIframe = document.createElement('iframe');
+            config.activeIframe.className = config.className;
+            config.activeIframe.setAttribute('src', config.dataSrc);
+            config.activeIframe.setAttribute('loading', 'lazy');
+            
+            config.container.appendChild(config.activeIframe);
+            
+            // Re-scale the newly mounted iframe to fit its container
             if (window.scaleIframes) window.scaleIframes();
-          };
+          });
+        } else {
+          // Card scrolled far away: Unmount iframe to reclaim memory immediately
+          cardConfigs.forEach(config => {
+            if (config.activeIframe) {
+              config.activeIframe.remove();
+              config.activeIframe = null;
+            }
+          });
         }
       });
-    } else {
-      // Mobile/Tablet: Iframe Recycling System to prevent OOM crashes while preserving layout
-      const containers = document.querySelectorAll('.phone-screen-container, .mac-screen-container, .travel-screen-container, .health-screen-container, .ezio-screen-container, .gametesting-screen-container');
-      
-      containers.forEach(container => {
-        const templateIframe = container.querySelector('iframe');
-        if (!templateIframe) return;
-        
-        // Save iframe details
-        const dataSrc = templateIframe.getAttribute('data-src');
-        const className = templateIframe.className;
-        
-        // Remove template iframe from DOM to save memory immediately
-        templateIframe.remove();
-        
-        // Find the parent project card
-        const card = container.closest('.project-card');
-        if (!card) return;
-        
-        let activeIframe = null;
-        let loadTimeout = null;
-        
-        const loadIframe = () => {
-          if (activeIframe) return;
-          
-          // Unload all other recycled active iframes on the page first (keeps memory limit to strictly 1 active iframe)
-          document.querySelectorAll('.phone-screen-container iframe, .mac-screen-container iframe, .travel-screen-container iframe, .health-screen-container iframe, .ezio-screen-container iframe, .gametesting-screen-container iframe').forEach(el => el.remove());
-          
-          // Create new iframe
-          activeIframe = document.createElement('iframe');
-          activeIframe.className = className;
-          activeIframe.setAttribute('src', dataSrc);
-          activeIframe.setAttribute('loading', 'lazy');
-          
-          container.appendChild(activeIframe);
-          
-          // Scale it
-          if (window.scaleIframes) window.scaleIframes();
-        };
-        
-        const unloadIframe = () => {
-          if (loadTimeout) clearTimeout(loadTimeout);
-          if (activeIframe) {
-            activeIframe.remove();
-            activeIframe = null;
-          }
-        };
-        
-        // Setup card touch / tap listeners (touchstart triggers loading)
-        card.addEventListener('touchstart', (e) => {
-          // If already loaded, do nothing
-          if (activeIframe) return;
-          
-          loadIframe();
-        }, { passive: true });
-        
-        // Also support pointer hover transitions on tablet
-        card.addEventListener('mouseenter', () => {
-          loadTimeout = setTimeout(loadIframe, 200);
-        });
-        card.addEventListener('mouseleave', unloadIframe);
-      });
-      
-      // Tap outside a project card should unload all iframes to completely free up memory
-      document.addEventListener('touchstart', (e) => {
-        if (!e.target.closest('.project-card')) {
-          document.querySelectorAll('.phone-screen-container iframe, .mac-screen-container iframe, .travel-screen-container iframe, .health-screen-container iframe, .ezio-screen-container iframe, .gametesting-screen-container iframe').forEach(el => el.remove());
-        }
-      }, { passive: true });
-    }
+    }, {
+      rootMargin: '600px 0px 600px 0px' // Load 600px before viewport, unload 600px after viewport
+    });
+    
+    // Observe each project card
+    const cards = document.querySelectorAll('.project-card');
+    cards.forEach(card => {
+      preloaderObserver.observe(card);
+    });
   }
 
   let finishTriggered = false;
