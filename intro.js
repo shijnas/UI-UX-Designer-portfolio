@@ -171,7 +171,7 @@
         card: container.closest('.project-card'),
         activeIframe: null
       };
-      iframe.remove(); // Remove from DOM immediately — load on demand
+      iframe.remove(); // Remove from DOM immediately — load dynamically on demand
       return config;
     }).filter(Boolean);
     
@@ -189,62 +189,154 @@
       return;
     }
     
-    // Mobile/Tablet: Load ONE iframe at a time, ONLY when user has stopped scrolling
-    let isScrolling = false;
-    let scrollTimer = null;
-    let activeConfig = null;
-    
-    const unloadAll = () => {
-      registry.forEach(cfg => {
-        if (cfg.activeIframe) {
-          cfg.activeIframe.remove();
-          cfg.activeIframe = null;
+    // Mobile/Tablet: Intelligent Directional Preloader and Queue Manager
+    class IntelligentMobilePreloader {
+      constructor(registry) {
+        this.registry = registry;
+        this.lastScrollY = window.scrollY;
+        this.direction = 'down';
+        this.isTickActive = false;
+        this.mountQueue = [];
+        this.isMounting = false;
+        this.init();
+      }
+
+      init() {
+        window.addEventListener('scroll', () => {
+          if (!this.isTickActive) {
+            requestAnimationFrame(() => this.tick());
+            this.isTickActive = true;
+          }
+        }, { passive: true });
+        
+        // Initial tick
+        this.tick();
+      }
+
+      tick() {
+        this.isTickActive = false;
+        const currentScrollY = window.scrollY;
+        
+        // Determine scroll direction
+        if (currentScrollY > this.lastScrollY) {
+          this.direction = 'down';
+        } else if (currentScrollY < this.lastScrollY) {
+          this.direction = 'up';
         }
-      });
-      activeConfig = null;
-    };
-    
-    const loadConfig = (config) => {
-      if (activeConfig === config) return;
-      unloadAll();
-      
-      const iframe = document.createElement('iframe');
-      iframe.className = config.className;
-      iframe.setAttribute('src', config.dataSrc);
-      iframe.setAttribute('loading', 'lazy');
-      config.container.appendChild(iframe);
-      config.activeIframe = iframe;
-      activeConfig = config;
-      if (window.scaleIframes) window.scaleIframes();
-    };
-    
-    // Find which config is most visible in the viewport
-    const getMostVisibleConfig = () => {
-      let best = null, bestArea = 0;
-      registry.forEach(config => {
-        const rect = config.container.getBoundingClientRect();
-        const visH = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
-        const visW = Math.min(rect.right, window.innerWidth) - Math.max(rect.left, 0);
-        if (visH > 0 && visW > 0) {
-          const area = visH * visW;
-          if (area > bestArea) { bestArea = area; best = config; }
+        this.lastScrollY = currentScrollY;
+
+        const vHeight = window.innerHeight;
+        const vTop = currentScrollY;
+        const vBottom = vTop + vHeight;
+
+        // Viewport buffers (1.5 viewports ahead for preload, 1.0 viewport behind for unload)
+        const preloadBuffer = 1.5 * vHeight;
+        const unloadBuffer = 1.0 * vHeight;
+
+        this.registry.forEach(config => {
+          const rect = config.container.getBoundingClientRect();
+          const elemTop = rect.top + currentScrollY;
+          const elemBottom = rect.bottom + currentScrollY;
+
+          // Check if element is currently inside the viewport (fully or partially)
+          const isVisible = rect.top < vHeight && rect.bottom > 0;
+
+          let shouldBeLoaded = false;
+
+          if (isVisible) {
+            shouldBeLoaded = true;
+          } else {
+            if (this.direction === 'down') {
+              const distBelow = elemTop - vBottom;
+              const distAbove = vTop - elemBottom;
+              if (distBelow > 0 && distBelow <= preloadBuffer) {
+                shouldBeLoaded = true;
+              } else if (distAbove > unloadBuffer) {
+                shouldBeLoaded = false;
+              } else if (config.activeIframe) {
+                shouldBeLoaded = true;
+              }
+            } else {
+              const distAbove = vTop - elemBottom;
+              const distBelow = elemTop - vBottom;
+              if (distAbove > 0 && distAbove <= preloadBuffer) {
+                shouldBeLoaded = true;
+              } else if (distBelow > unloadBuffer) {
+                shouldBeLoaded = false;
+              } else if (config.activeIframe) {
+                shouldBeLoaded = true;
+              }
+            }
+          }
+
+          if (shouldBeLoaded) {
+            this.queueMount(config);
+          } else {
+            this.unmountIframe(config);
+          }
+        });
+      }
+
+      queueMount(config) {
+        if (config.activeIframe) return; // Already loaded
+        if (this.mountQueue.includes(config)) return; // Already in queue
+
+        this.mountQueue.push(config);
+        this.processQueue();
+      }
+
+      processQueue() {
+        if (this.isMounting || this.mountQueue.length === 0) return;
+
+        this.isMounting = true;
+        const nextConfig = this.mountQueue.shift();
+
+        this.mountIframe(nextConfig);
+
+        // Rate-limit mounting to 350ms to prevent CPU layout spike
+        setTimeout(() => {
+          this.isMounting = false;
+          this.processQueue();
+        }, 350);
+      }
+
+      mountIframe(config) {
+        if (config.activeIframe) return;
+
+        const iframe = document.createElement('iframe');
+        iframe.className = config.className;
+        iframe.setAttribute('src', config.dataSrc);
+        iframe.setAttribute('loading', 'lazy');
+        
+        // Hide until fully loaded to avoid white flash
+        iframe.style.opacity = '0';
+        iframe.style.transition = 'opacity 0.3s ease';
+        
+        iframe.onload = () => {
+          iframe.style.opacity = '1';
+          if (window.scaleIframes) window.scaleIframes();
+        };
+        
+        config.container.appendChild(iframe);
+        config.activeIframe = iframe;
+      }
+
+      unmountIframe(config) {
+        // Remove from queue if pending
+        const qIndex = this.mountQueue.indexOf(config);
+        if (qIndex > -1) {
+          this.mountQueue.splice(qIndex, 1);
         }
-      });
-      return best;
-    };
-    
-    // On scroll: unload immediately and restart idle timer
-    window.addEventListener('scroll', () => {
-      isScrolling = true;
-      unloadAll(); // Instantly free memory during scroll
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(() => {
-        isScrolling = false;
-        // After 800ms idle, load the most visible iframe
-        const visible = getMostVisibleConfig();
-        if (visible) loadConfig(visible);
-      }, 800);
-    }, { passive: true });
+
+        if (!config.activeIframe) return;
+
+        config.activeIframe.src = 'about:blank';
+        config.activeIframe.remove();
+        config.activeIframe = null;
+      }
+    }
+
+    new IntelligentMobilePreloader(registry);
   }
 
   let finishTriggered = false;
