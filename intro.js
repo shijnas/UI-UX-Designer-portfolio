@@ -152,8 +152,6 @@
     if (iframesInitialized) return;
     iframesInitialized = true;
     
-    const isDesktop = window.innerWidth > 1024;
-    
     // Find all screen containers
     const containers = Array.from(document.querySelectorAll(
       '.phone-screen-container, .mac-screen-container, .travel-screen-container, ' +
@@ -175,168 +173,131 @@
       return config;
     }).filter(Boolean);
     
-    if (isDesktop) {
-      // Desktop: preload all iframes immediately for interactive hover
-      registry.forEach(config => {
-        const iframe = document.createElement('iframe');
-        iframe.className = config.className;
-        iframe.setAttribute('src', config.dataSrc);
-        iframe.setAttribute('loading', 'lazy');
-        config.container.appendChild(iframe);
-        config.activeIframe = iframe;
-        if (window.scaleIframes) window.scaleIframes();
-      });
+    // Keep the mobile Safari memory footprint bounded. Desktop retains the
+    // original eager behavior so hover previews remain unchanged there.
+    if (window.innerWidth > 1024) {
+      registry.forEach(config => mountIframe(config));
       return;
     }
-    
-    // Mobile/Tablet: Intelligent Directional Preloader and Queue Manager
-    class IntelligentMobilePreloader {
-      constructor(registry) {
-        this.registry = registry;
-        this.lastScrollY = window.scrollY;
-        this.direction = 'down';
-        this.isTickActive = false;
-        this.mountQueue = [];
-        this.isMounting = false;
-        this.init();
-      }
 
-      init() {
-        window.addEventListener('scroll', () => {
-          if (!this.isTickActive) {
-            requestAnimationFrame(() => this.tick());
-            this.isTickActive = true;
-          }
-        }, { passive: true });
-        
-        // Initial tick
-        this.tick();
-      }
+    // ────────────────────────────────────────────────────────────
+    // MOBILE: Smart Iframe Lifecycle Manager
+    //   • MAX 2 iframes alive in DOM at any time (current + next)
+    //   • Predictive preload 1.5vh ahead in scroll direction
+    //   • Instant reveal — fade-in on load, no white flash
+    //   • Hard-abort unmounted iframes (src=about:blank) to stop
+    //     all JS/network/timers in the embedded site immediately
+    //   • Single requestAnimationFrame tick — never blocks scroll
+    // ────────────────────────────────────────────────────────────
+    const MAX_ACTIVE = 2; // current + 1 preload only
 
-      tick() {
-        this.isTickActive = false;
-        const currentScrollY = window.scrollY;
-        
-        // Determine scroll direction
-        if (currentScrollY > this.lastScrollY) {
-          this.direction = 'down';
-        } else if (currentScrollY < this.lastScrollY) {
-          this.direction = 'up';
-        }
-        this.lastScrollY = currentScrollY;
-
-        const vHeight = window.innerHeight;
-        const vTop = currentScrollY;
-        const vBottom = vTop + vHeight;
-
-        // Viewport buffers (1.5 viewports ahead for preload, 1.0 viewport behind for unload)
-        const preloadBuffer = 1.5 * vHeight;
-        const unloadBuffer = 1.0 * vHeight;
-
-        this.registry.forEach(config => {
-          const rect = config.container.getBoundingClientRect();
-          const elemTop = rect.top + currentScrollY;
-          const elemBottom = rect.bottom + currentScrollY;
-
-          // Check if element is currently inside the viewport (fully or partially)
-          const isVisible = rect.top < vHeight && rect.bottom > 0;
-
-          let shouldBeLoaded = false;
-
-          if (isVisible) {
-            shouldBeLoaded = true;
-          } else {
-            if (this.direction === 'down') {
-              const distBelow = elemTop - vBottom;
-              const distAbove = vTop - elemBottom;
-              if (distBelow > 0 && distBelow <= preloadBuffer) {
-                shouldBeLoaded = true;
-              } else if (distAbove > unloadBuffer) {
-                shouldBeLoaded = false;
-              } else if (config.activeIframe) {
-                shouldBeLoaded = true;
-              }
-            } else {
-              const distAbove = vTop - elemBottom;
-              const distBelow = elemTop - vBottom;
-              if (distAbove > 0 && distAbove <= preloadBuffer) {
-                shouldBeLoaded = true;
-              } else if (distBelow > unloadBuffer) {
-                shouldBeLoaded = false;
-              } else if (config.activeIframe) {
-                shouldBeLoaded = true;
-              }
-            }
-          }
-
-          if (shouldBeLoaded) {
-            this.queueMount(config);
-          } else {
-            this.unmountIframe(config);
-          }
-        });
-      }
-
-      queueMount(config) {
-        if (config.activeIframe) return; // Already loaded
-        if (this.mountQueue.includes(config)) return; // Already in queue
-
-        this.mountQueue.push(config);
-        this.processQueue();
-      }
-
-      processQueue() {
-        if (this.isMounting || this.mountQueue.length === 0) return;
-
-        this.isMounting = true;
-        const nextConfig = this.mountQueue.shift();
-
-        this.mountIframe(nextConfig);
-
-        // Rate-limit mounting to 350ms to prevent CPU layout spike
-        setTimeout(() => {
-          this.isMounting = false;
-          this.processQueue();
-        }, 350);
-      }
-
-      mountIframe(config) {
-        if (config.activeIframe) return;
-
-        const iframe = document.createElement('iframe');
-        iframe.className = config.className;
-        iframe.setAttribute('src', config.dataSrc);
-        iframe.setAttribute('loading', 'lazy');
-        
-        // Hide until fully loaded to avoid white flash
-        iframe.style.opacity = '0';
-        iframe.style.transition = 'opacity 0.3s ease';
-        
-        iframe.onload = () => {
-          iframe.style.opacity = '1';
-          if (window.scaleIframes) window.scaleIframes();
-        };
-        
-        config.container.appendChild(iframe);
-        config.activeIframe = iframe;
-      }
-
-      unmountIframe(config) {
-        // Remove from queue if pending
-        const qIndex = this.mountQueue.indexOf(config);
-        if (qIndex > -1) {
-          this.mountQueue.splice(qIndex, 1);
-        }
-
-        if (!config.activeIframe) return;
-
-        config.activeIframe.src = 'about:blank';
-        config.activeIframe.remove();
-        config.activeIframe = null;
-      }
+    function mountIframe(config) {
+      if (config.activeIframe) return;
+      const iframe = document.createElement('iframe');
+      iframe.className = config.className;
+      iframe.setAttribute('src', config.dataSrc);
+      iframe.setAttribute('loading', 'lazy');
+      iframe.setAttribute('title', 'Interactive project preview');
+      iframe.style.opacity = '0';
+      iframe.style.transition = 'opacity 0.35s ease';
+      iframe.addEventListener('load', () => {
+        iframe.style.opacity = '1';
+        if (window.scaleIframes) window.scaleIframes();
+      }, { once: true });
+      config.container.appendChild(iframe);
+      config.activeIframe = iframe;
     }
 
-    new IntelligentMobilePreloader(registry);
+    function unmountIframe(config) {
+      if (!config.activeIframe) return;
+      // Set src to about:blank FIRST — this stops all JS, timers,
+      // and network requests inside the embedded site immediately,
+      // preventing a memory spike during removal.
+      config.activeIframe.src = 'about:blank';
+      config.activeIframe.remove();
+      config.activeIframe = null;
+    }
+
+    let lastScrollY = window.scrollY;
+    let scrollDir = 'down';
+    let tickQueued = false;
+
+    function evaluate() {
+      tickQueued = false;
+      const currentScrollY = window.scrollY;
+
+      // Track direction
+      if (currentScrollY > lastScrollY) scrollDir = 'down';
+      else if (currentScrollY < lastScrollY) scrollDir = 'up';
+      lastScrollY = currentScrollY;
+
+      const vh = window.innerHeight;
+
+      // Score each entry: lower = closer to user in scroll direction
+      const scored = registry.map(config => {
+        const rect = config.container.getBoundingClientRect();
+        const midpoint = rect.top + rect.height / 2;
+        const inViewport = rect.top < vh && rect.bottom > 0;
+
+        let score;
+        if (inViewport) {
+          // Currently visible — highest priority (negative = comes first)
+          score = -10000 + Math.abs(midpoint - vh / 2);
+        } else if (scrollDir === 'down') {
+          // Below viewport — preload sooner if closer
+          const dist = rect.top - vh;
+          score = dist >= 0 ? dist : 999999; // ignore fully above
+        } else {
+          // Above viewport — preload sooner if closer
+          const dist = -rect.bottom;
+          score = dist >= 0 ? dist : 999999; // ignore fully below
+        }
+        return { config, score, inViewport };
+      });
+
+      // Sort: visible first, then by closeness in scroll direction
+      scored.sort((a, b) => a.score - b.score);
+
+      // Only want the top MAX_ACTIVE entries that are within preload range
+      const PRELOAD_RANGE = 1.5 * vh;
+      const wanted = new Set();
+      for (const { config, score, inViewport } of scored) {
+        if (wanted.size >= MAX_ACTIVE) break;
+        // Include if visible OR within preload buffer ahead
+        if (inViewport || (score >= 0 && score <= PRELOAD_RANGE)) {
+          wanted.add(config);
+        }
+      }
+
+      // Apply — unmount anything not wanted, mount what is
+      registry.forEach(config => {
+        if (wanted.has(config)) {
+          mountIframe(config);
+        } else {
+          unmountIframe(config);
+        }
+      });
+    }
+
+    function scheduleTick() {
+      if (tickQueued) return;
+      tickQueued = true;
+      requestAnimationFrame(evaluate);
+    }
+
+    // Passive scroll listener — one rAF tick per scroll event
+    window.addEventListener('scroll', scheduleTick, { passive: true });
+
+    // IntersectionObserver — fires when any container enters/leaves
+    // the viewport even without a scroll event (e.g. on resize)
+    const visibilityObserver = new IntersectionObserver(
+      () => scheduleTick(),
+      { rootMargin: '150% 0px 150% 0px', threshold: 0 }
+    );
+    registry.forEach(config => visibilityObserver.observe(config.container));
+
+    // Initial evaluation
+    evaluate();
   }
 
   let finishTriggered = false;
