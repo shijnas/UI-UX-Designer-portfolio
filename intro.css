@@ -478,18 +478,24 @@ body.intro-active .header {
 #cin-scroll-hint span {
   font-size: 0.63rem;
   letter-spacing: 0.22em;
-  color: rgba(255, 255, 255, 0.32);
   text-transform: uppercase;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 700;
+  font-weight: 800;
+  background: linear-gradient(90deg, #a855f7, #3b82f6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.5));
 }
 
 .cin-scroll-mouse {
   width: 20px;
   height: 32px;
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border: 1.5px solid transparent;
   border-radius: 10px;
   position: relative;
+  background: linear-gradient(#06040d, #06040d) padding-box, linear-gradient(135deg, #a855f7, #3b82f6) border-box;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
 }
 
 .cin-scroll-mouse::after {
@@ -500,7 +506,7 @@ body.intro-active .header {
   transform: translateX(-50%);
   width: 2.5px;
   height: 6px;
-  background: rgba(168, 85, 247, 0.9);
+  background: #3b82f6; /* Cyan-blue accent for dot matches mouse gradient bottom */
   border-radius: 2px;
   animation: cin-scroll-dot 1.9s ease infinite;
 }
@@ -666,11 +672,17 @@ body.light-theme #cinematic-intro {
 }
 
 body.light-theme #cin-scroll-hint span {
-  color: rgba(0, 0, 0, 0.45);
+  background: linear-gradient(90deg, #8a3aff, #3b82f6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 4px rgba(138, 58, 255, 0.4));
 }
 
 body.light-theme .cin-scroll-mouse {
-  border-color: rgba(138, 58, 255, 0.35);
+  border: 1.5px solid transparent;
+  background: linear-gradient(#f6f5f8, #f6f5f8) padding-box, linear-gradient(135deg, #8a3aff, #3b82f6) border-box;
+  box-shadow: 0 0 8px rgba(138, 58, 255, 0.25);
 }
 
 body.light-theme #intro-skip-btn {
