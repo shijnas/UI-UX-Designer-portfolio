@@ -3348,7 +3348,6 @@ body.light-theme .phone-screen-iframe {
   height: 23.44%; /* 180 / 768 */
   z-index: 1;
   pointer-events: none;
-  mix-blend-mode: screen;
   animation: neon-flicker 5s infinite;
   /* Hardware acceleration to prevent CPU layouts and lower GPU repaints */
   will-change: opacity;
@@ -3360,7 +3359,6 @@ body.light-theme .phone-screen-iframe {
   position: absolute;
   z-index: 1;
   pointer-events: none;
-  mix-blend-mode: screen;
   /* Rotate fans */
   animation: fan-spin 1.0s linear infinite;
   /* Hardware acceleration layer promotion */
@@ -3500,5 +3498,16 @@ body.light-theme .phone-screen-iframe {
   picture {
     display: contents;
   }
+}
+
+/* ============================================================
+   GPU Optimization: Pause animations when offscreen
+   ============================================================ */
+.pause-animations,
+.pause-animations *,
+.project-card.pause-animations .gametesting-overlay-fan,
+.project-card.pause-animations .gametesting-overlay-neon,
+.glow-bg.pause-animations {
+  animation-play-state: paused !important;
 }
 

@@ -1093,5 +1093,46 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(scaleIframes, 500);
     setTimeout(scaleIframes, 1500);
     setTimeout(scaleIframes, 3000);
+
+    // ==========================================================================
+    // GPU Optimization: Pause CSS animations when offscreen
+    // ==========================================================================
+    if ('IntersectionObserver' in window) {
+      // 1. Observe Hero Section to pause floating widgets and background glows
+      const heroSection = document.getElementById('hero');
+      const glowBgs = document.querySelectorAll('.glow-bg');
+      if (heroSection) {
+        const heroObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              heroSection.classList.remove('pause-animations');
+              glowBgs.forEach(el => el.classList.remove('pause-animations'));
+            } else {
+              heroSection.classList.add('pause-animations');
+              glowBgs.forEach(el => el.classList.add('pause-animations'));
+            }
+          });
+        }, { threshold: 0 });
+        heroObserver.observe(heroSection);
+      }
+
+      // 2. Observe Game Testing Card to pause rotating fans and flickering neon
+      const gameTestingInteractive = document.querySelector('.project-gametesting-interactive');
+      if (gameTestingInteractive) {
+        const gameTestingCard = gameTestingInteractive.closest('.project-card');
+        if (gameTestingCard) {
+          const gameTestingObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                gameTestingCard.classList.remove('pause-animations');
+              } else {
+                gameTestingCard.classList.add('pause-animations');
+              }
+            });
+          }, { threshold: 0 });
+          gameTestingObserver.observe(gameTestingCard);
+        }
+      }
+    }
   }
 });
