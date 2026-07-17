@@ -181,17 +181,12 @@
     }
 
     // ────────────────────────────────────────────────────────────
-    // MOBILE: Smart Iframe Lifecycle Manager
-    //   • MAX 1 iframe alive in DOM at any time
-    //   • Sequential transition: unmount old → 500ms GC pause → mount new
-    //   • src=about:blank on unmount stops ALL JS/network/timers instantly
-    //   • Single rAF tick per scroll event — never blocks compositor
-    //   • Fade-in on load — no white flash
+    // MOBILE: Pure IntersectionObserver-Driven Lifecycle Manager
+    //   • ZERO scroll event listeners and ZERO layout reads on scroll thread
+    //   • 100% native asynchronous browser events for 60fps/120fps scrolling
+    //   • Preloads dynamically when containers are within 60% of viewport
+    //   • Hard-abort unmounts (src=about:blank) to instantly release RAM
     // ────────────────────────────────────────────────────────────
-    const MAX_ACTIVE = 1;
-
-    let transitioning = false;
-
     function mountIframe(config) {
       if (config.activeIframe) return;
       const iframe = document.createElement('iframe');
@@ -217,90 +212,42 @@
       config.activeIframe = null;
     }
 
-    let lastScrollY = window.scrollY;
-    let scrollDir = 'down';
-    let tickQueued = false;
-    let pendingMount = null;
-    let gcTimer = null;
+    const activeConfigs = new Set();
+    let transitionTimer = null;
 
-    function evaluate() {
-      tickQueued = false;
-      const currentScrollY = window.scrollY;
+    const visibilityObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const container = entry.target;
+        const config = registry.find(c => c.container === container);
+        if (!config) return;
 
-      if (currentScrollY > lastScrollY) scrollDir = 'down';
-      else if (currentScrollY < lastScrollY) scrollDir = 'up';
-      lastScrollY = currentScrollY;
-
-      const vh = window.innerHeight;
-
-      // Find the single most-relevant screen to show
-      // Priority: visible > nearest ahead in scroll direction
-      let bestVisible = null;
-      let bestAhead = null;
-      let bestAheadDist = Infinity;
-
-      registry.forEach(config => {
-        const rect = config.container.getBoundingClientRect();
-        const inViewport = rect.top < vh && rect.bottom > 0;
-
-        if (inViewport) {
-          // Among visible, pick the one closest to screen center
-          const distToCenter = Math.abs((rect.top + rect.height / 2) - vh / 2);
-          if (!bestVisible || distToCenter < bestVisible.dist) {
-            bestVisible = { config, dist: distToCenter };
-          }
+        if (entry.isIntersecting) {
+          activeConfigs.add(config);
         } else {
-          // Among off-screen, pick nearest one in scroll direction
-          const dist = scrollDir === 'down' ? rect.top - vh : -rect.bottom;
-          if (dist >= 0 && dist < bestAheadDist) {
-            bestAheadDist = dist;
-            bestAhead = config;
-          }
+          activeConfigs.delete(config);
         }
       });
 
-      // Wanted = best visible only (MAX_ACTIVE = 1, no preload to prevent crash)
-      const wanted = new Set();
-      if (bestVisible) wanted.add(bestVisible.config);
+      // Split into mount/unmount sets based on active visibility list
+      const toUnmount = registry.filter(c => !activeConfigs.has(c) && c.activeIframe);
+      const toMount   = registry.filter(c => activeConfigs.has(c) && !c.activeIframe);
 
-      // Apply changes
-      const toUnmount = registry.filter(c => !wanted.has(c) && c.activeIframe);
-      const toMount   = registry.filter(c =>  wanted.has(c) && !c.activeIframe);
+      // Unmount out-of-view iframes instantly to reclaim memory
+      toUnmount.forEach(unmountIframe);
 
-      if (toMount.length === 0 && toUnmount.length === 0) return;
-
-      if (toUnmount.length > 0 && toMount.length > 0 && !transitioning) {
-        // Sequential transition: free old memory before allocating new
-        transitioning = true;
-        clearTimeout(gcTimer);
-        toUnmount.forEach(unmountIframe);
-
-        gcTimer = setTimeout(() => {
+      // Debounce mounting by 150ms to allow scrolling swipe gesture to settle
+      if (toMount.length > 0) {
+        clearTimeout(transitionTimer);
+        transitionTimer = setTimeout(() => {
           toMount.forEach(mountIframe);
-          transitioning = false;
-        }, 500); // 500ms lets Safari's GC reclaim the old iframe's RAM
-      } else if (toUnmount.length > 0 && !transitioning) {
-        toUnmount.forEach(unmountIframe);
-      } else if (toMount.length > 0 && !transitioning) {
-        toMount.forEach(mountIframe);
+        }, 150);
       }
-    }
+    }, {
+      rootMargin: '60% 0px 60% 0px', // 60% of viewport height buffer above/below
+      threshold: 0
+    });
 
-    function scheduleTick() {
-      if (tickQueued) return;
-      tickQueued = true;
-      requestAnimationFrame(evaluate);
-    }
-
-    window.addEventListener('scroll', scheduleTick, { passive: true });
-
-    const visibilityObserver = new IntersectionObserver(
-      () => scheduleTick(),
-      { rootMargin: '50% 0px 50% 0px', threshold: 0 }
-    );
     registry.forEach(config => visibilityObserver.observe(config.container));
-
-    evaluate();
   }
 
   let finishTriggered = false;
