@@ -34,11 +34,20 @@ document.addEventListener('DOMContentLoaded', () => {
   if (savedTheme === 'light' || (!savedTheme && prefersLight)) {
     body.classList.add('light-theme');
     body.classList.remove('dark-theme');
-    updateWallpapers(true);
+    // Defer wallpaper decode to after load — inline HTML style covers initial render
+    if (window.requestIdleCallback) {
+      requestIdleCallback(() => updateWallpapers(true));
+    } else {
+      window.addEventListener('load', () => updateWallpapers(true), { once: true });
+    }
   } else {
     body.classList.add('dark-theme');
     body.classList.remove('light-theme');
-    updateWallpapers(false);
+    if (window.requestIdleCallback) {
+      requestIdleCallback(() => updateWallpapers(false));
+    } else {
+      window.addEventListener('load', () => updateWallpapers(false), { once: true });
+    }
   }
 
   themeToggle.addEventListener('click', () => {

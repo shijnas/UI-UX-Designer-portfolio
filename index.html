@@ -14,7 +14,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,500;0,700;0,800;1,400&display=swap" rel="stylesheet">
   
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="style.css">
@@ -768,11 +768,11 @@
               <img src="assets/project-gametesting.jpg" alt="Game Testing Portfolio" class="project-img" loading="lazy" decoding="async">
             </picture>
             <!-- Animated Fans & Neon Sign Overlays -->
-            <img class="gametesting-overlay-neon" src="assets/neon-sign.png" alt="">
-            <img class="gametesting-overlay-fan fan-front-top" src="assets/fan-front-top.png" alt="">
-            <img class="gametesting-overlay-fan fan-front-middle" src="assets/fan-front-middle.png" alt="">
-            <img class="gametesting-overlay-fan fan-front-bottom" src="assets/fan-front-bottom.png" alt="">
-            <img class="gametesting-overlay-fan fan-rear" src="assets/fan-rear.png" alt="">
+            <img class="gametesting-overlay-neon" src="assets/neon-sign.png" alt="" loading="lazy" decoding="async">
+            <img class="gametesting-overlay-fan fan-front-top" src="assets/fan-front-top.png" alt="" loading="lazy" decoding="async">
+            <img class="gametesting-overlay-fan fan-front-middle" src="assets/fan-front-middle.png" alt="" loading="lazy" decoding="async">
+            <img class="gametesting-overlay-fan fan-front-bottom" src="assets/fan-front-bottom.png" alt="" loading="lazy" decoding="async">
+            <img class="gametesting-overlay-fan fan-rear" src="assets/fan-rear.png" alt="" loading="lazy" decoding="async">
             <div class="gametesting-screen-container">
               <iframe class="gametesting-screen-iframe" src="about:blank" data-src="https://shijnas-yunus-portfolio1.vercel.app/" loading="lazy"></iframe>
             </div>
@@ -1184,10 +1184,10 @@
 
   </div><!-- /#main-wrapper -->
 
-  <!-- Main JavaScript File -->
-  <script src="script.js"></script>
+  <!-- Main JavaScript File (defer: parse after HTML, execute after DOMContentLoaded) -->
+  <script src="script.js" defer></script>
   <!-- Ezio AI Assistant -->
-  <script src="ezio-ai.js"></script>
+  <script src="ezio-ai.js" defer></script>
   <!-- Cinematic Intro Engine (loaded last so portfolio is ready) -->
   <script src="intro.js"></script>
 </body>
