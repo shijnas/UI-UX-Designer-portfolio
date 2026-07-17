@@ -201,40 +201,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ==========================================================================
   // 5. Active Link Highlighting on Scroll (Scrollspy)
+  //    Uses IntersectionObserver instead of scroll+offsetTop to avoid
+  //    forced synchronous layouts on every scroll event.
   // ==========================================================================
-  const sections = document.querySelectorAll('section, footer');
-  
-  function highlightNavigation() {
-    let currentSectionId = '';
-    const scrollPosition = window.scrollY + 160; // Offset for sticky header
-    
-    sections.forEach(section => {
-      const sectionTop = section.offsetTop;
-      const id = section.getAttribute('id');
-      if (id && scrollPosition >= sectionTop) {
-        currentSectionId = id;
-      }
-    });
-    
-    if (currentSectionId) {
+  const sections = document.querySelectorAll('section[id], footer[id]');
+
+  const scrollspyObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const id = entry.target.getAttribute('id');
+      if (!id) return;
       let newlyActive = null;
       navLinks.forEach(link => {
-        if (link.getAttribute('href') === `#${currentSectionId}`) {
+        if (link.getAttribute('href') === `#${id}`) {
           link.classList.add('active');
           newlyActive = link;
         } else {
           link.classList.remove('active');
         }
       });
-      // Move the sliding highlight to the newly active link if user is not hovering
-      if (newlyActive && !isMouseOverNav) {
-        updateHighlight(newlyActive);
-      }
-    }
-  }
+      if (newlyActive && !isMouseOverNav) updateHighlight(newlyActive);
+    });
+  }, {
+    rootMargin: '-40% 0px -55% 0px', // Fires when section is in the middle 5% of viewport
+    threshold: 0
+  });
 
-  window.addEventListener('scroll', highlightNavigation);
-  highlightNavigation(); // Run on load
+  sections.forEach(s => scrollspyObserver.observe(s));
 
   // Initialize scroll-reveal active state for Hero section on load
   const heroElements = document.querySelectorAll('.hero-section .fade-in');
@@ -725,11 +718,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     addHoverListeners();
     
-    // Dynamic selector observer to bind dynamically added elements
-    const observer = new MutationObserver(() => {
-      addHoverListeners();
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
+    // One-time second pass after a short delay to catch late-rendered elements
+    // (avoids expensive MutationObserver on body that ran addHoverListeners on EVERY DOM change)
+    setTimeout(addHoverListeners, 1200);
     
     // Hide cursor when it leaves the page window
     document.addEventListener('mouseleave', () => {

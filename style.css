@@ -1940,6 +1940,7 @@ body.light-theme .sun-icon {
 }
 
 .project-card:hover .project-image-wrapper {
+  will-change: transform; /* Promote layer only on hover, not permanently */
   transform: scale(1.05);
   z-index: 3;
 }
@@ -3006,10 +3007,10 @@ body.light-theme .shortcut-btn:active {
   display: flex;
   flex-direction: column;
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  will-change: transform;
 }
 
 .mock-phone:hover {
+  will-change: transform;  /* Only promote GPU layer when user is actually hovering */
   transform: translateY(-8px) scale(1.03);
   box-shadow: 
     0 0 0 1.5px #8b5cf6,
